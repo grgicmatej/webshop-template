@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-class NotFoundController
+class AdminController
 {
     public function index(): void
     {
         $view = new View();
-        $view->render('public/404',
+        $view->render('admin/index',
             []);
     }
 }
