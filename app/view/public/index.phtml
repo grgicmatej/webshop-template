@@ -24,6 +24,21 @@
     <p>FontAwesome test: <i class="fas fa-globe-asia fa-2x"></i></p>
     <br>
     <p>Custom style test: <span class="testStyle">test</span></p>
+
+    <form action="<?=App::config('url')?>Login/login" method="post">
+        <input type="email" name="email" required>
+        <input type="password" name="password" required>
+        <input type="submit" placeholder="submit" value="submit">
+    </form>
+    <?= isset($_GET['m']) && $_GET['m'] === '1' ? 'Pogrešna email adresa ili lozinka' : ''?>
+
+    <?php
+    if (Session::getInstance()->isLoggedIn()):
+        var_dump(Session::getInstance()->getName());
+    ?>
+        <br>
+        <a href="<?=App::config('url')?>Login/logout">logout</a>
+    <?php endif;?>
 </div>
 
 <?php require 'footer.phtml' ?>

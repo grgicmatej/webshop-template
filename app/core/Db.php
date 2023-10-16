@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
 
 class Db extends PDO{
 
-    private static Db $instance;
+    private static $instance;
 
     public function __construct($config)
     {
@@ -15,8 +14,8 @@ class Db extends PDO{
         $this -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this -> setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     }
-    
-    public static function getInstance(): Db
+
+    public static function getInstance()
     {
         if (is_null(self::$instance)) {
             self::$instance = new self(App::config('db'));

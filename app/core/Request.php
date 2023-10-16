@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 class Request
 {
-    public static function pathInfo(): string
+    public static function pathInfo()
     {
         if (isset($_SERVER['PATH_INFO'])) {
             return $_SERVER['PATH_INFO'];
@@ -13,5 +11,10 @@ class Request
         } else {
             return '';
         }
+    }
+
+    public static function post($key, $default='')
+    {
+        return $_POST[$key] ?? $default;
     }
 }

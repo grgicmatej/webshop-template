@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 class Session
 {
-    public function login($user): void
+    private static $instance;
+
+    public function login($isAdmin, $userDetails): void
     {
-        $_SESSION['user'] = $user;
+        $_SESSION['isAdmin'] = $isAdmin;
+        $_SESSION['name'] = $userDetails['name'].' '.$userDetails['surname'];
         $_SESSION['isLoggedIn'] = true;
     }
 
@@ -21,19 +24,21 @@ class Session
         return isset($_SESSION['isLoggedIn']);
     }
 
-    public static function startSession($sessionKey, $sessionValue): void
+    public function isAdmin(): bool
     {
-        session_start();
-        if(true === isset($_SESSION[$sessionKey])){
-            unset($_SESSION[$sessionValue]);
-        }
-        $_SESSION[$sessionKey]=$sessionValue;
+        return isset($_SESSION['isAdmin']);
     }
 
-    public static function stopSession($sessionKey): void
+    public function getName(): string
     {
-        if(true === isset($_SESSION[$sessionKey])){
-            unset($_SESSION[$sessionKey]);
+        return $_SESSION['name'] ?? '';
+    }
+
+    public static function getInstance(): Session
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
         }
+        return self::$instance;
     }
 }
