@@ -21,7 +21,7 @@ class Users
     public static function findDetailsForUser(string $id): ?array
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare('SELECT * FROM users_details WHERE id=:id');
+        $stmt = $db->prepare('SELECT * FROM users_details WHERE user_id=:id');
         $stmt->bindValue('id', $id);
         $stmt->execute();
         $fetchedData = $stmt->fetch();
