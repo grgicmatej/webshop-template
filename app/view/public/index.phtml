@@ -16,8 +16,19 @@
     <meta name="author" content="">
 
     <?php require 'headCss.phtml' ?>
+
+    <script src="https://cdn.tiny.cloud/1/1v05vfl8eqtjxz89tzwpzvx1cw0enxxk9hjoqz6e9yuzp54c/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+    });
+</script>
+
+
 <div class="container">
     <p>Bootstrap 5 test</p>
     <br>
@@ -40,6 +51,10 @@
         <a href="<?=App::config('url')?>Login/logout">logout</a>
     <?php endif;?>
 </div>
+
+<textarea>
+  Welcome to TinyMCE!
+</textarea>
 
 <?php require 'footer.phtml' ?>
 </body>
