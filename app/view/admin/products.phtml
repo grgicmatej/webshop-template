@@ -175,7 +175,7 @@
                         <!-- PRODUCT LIST -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Najpopularniji proizvodi</h3>
+                                <h3 class="card-title">Kreiraj novi proizvod</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -188,22 +188,71 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body p-0">
-                                <ul class="products-list product-list-in-card pl-2 pr-2">
-                                    <!--
-                                    <li class="item">
-                                        <div class="product-img">
-                                            <img src="<?= App::config("url") ?>assets/img/admin/img/default-150x150.png" alt="Product Image" class="img-size-50">
-                                        </div>
-                                        <div class="product-info">
-                                            <a href="javascript:void(0)" class="product-title">Samsung TV
-                                                <span class="badge badge-warning float-right">$1800</span></a>
-                                            <span class="product-description">
-                        Samsung 32" 1080p 60Hz LED Smart HDTV.
-                      </span>
-                                        </div>
-                                    </li> -->
+                                <div class="card card-primary">
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+                                    <form action="<?=App::config('url')?>Product/createProduct" method="post"  enctype="multipart/form-data">
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="name_hr">Naziv proizvoda (HR)</label>
+                                                <input type="text" class="form-control" id="name_hr" name="name_hr" placeholder="Unesite ime proizvoda">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name_en">Naziv proizvoda (EN)</label>
+                                                <input type="text" class="form-control" id="name_en" name="name_en" placeholder="Unesite ime proizvoda">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="price">Cijena proizvoda</label>
+                                                <input type="number" class="form-control" id="price" name="price" placeholder="Unesite cijenu proizvoda" step=".01">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="price_on_sale">Cijena proizvoda na popustu</label>
+                                                <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" placeholder="Unesite cijenu proizvoda na akciji" step=".01">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="active_sale_price">Aktivan popust?</label>
+                                                <input type="checkbox" class="form-control" id="active_sale_price" name="active_sale_price" placeholder="Aktivan" value="1">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="available">Dostupna količina</label>
+                                                <input type="number" class="form-control" id="available" name="available" placeholder="Unesite količinu dostupnih proizvoda" step="1">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="description_hr">Opis proizvoda (HR)</label>
+                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="description_en">Opis proizvoda (EN)</label>
+                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="active">Aktivan proizvod?</label>
+                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="sku_number">SKU broj</label>
+                                                <input type="number" class="form-control" id="sku_number" name="sku_number" placeholder="Unesite sku broj ako postoji" step="1">
+                                            </div>
 
-                                </ul>
+
+                                            <div class="form-group">
+                                                <label for="exampleInputFile">Odabir slike</label>
+                                                <div class="input-group">
+                                                    <div class="custom-file">
+                                                        <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile">
+                                                        <label class="custom-file-label" for="exampleInputFile">Odabir slike</label>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+
+                                        <div class="card-footer">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer text-center">

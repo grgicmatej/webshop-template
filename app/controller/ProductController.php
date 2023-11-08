@@ -25,7 +25,7 @@ class ProductController extends SecurityController
     public function createProduct(): void
     {
         $this->isAdmin();
-        Upload::UploadPhoto();
+        Upload::UploadPhoto(true);
         if (Upload::GetFileName() !== NULL){
             $id = Uuid::generateUuid();
             Product::create($id, Upload::GetFileName());
@@ -73,7 +73,7 @@ class ProductController extends SecurityController
     public function updateProduct($id): void
     {
         $this->isAdmin();
-        Upload::UploadPhoto();
+        Upload::UploadPhoto(true);
         $uploadImage = null;
         if (Upload::GetFileName() !== NULL) {
             $uploadImage = Upload::GetFileName();
