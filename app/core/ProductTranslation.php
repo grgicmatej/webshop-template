@@ -36,7 +36,14 @@ class ProductTranslation
     {
         $db = Db::getInstance();
         $stmt = $db->prepare('UPDATE product_translations SET description=:description WHERE locale=:locale AND product_id=:product_id');
-        $stmt->bindValue('description', Request::post('description'));
+        switch ($locale) {
+            case 'en':
+                $stmt->bindValue('description', Request::post('description_en'));
+                break;
+            default:
+                $stmt->bindValue('description', Request::post('description_hr'));
+                break;
+        }
         $stmt->bindValue('locale', $locale);
         $stmt->bindValue('product_id', $productId);
         $stmt->execute();

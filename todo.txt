@@ -1,0 +1,5 @@
+- obrisati sliku proizvoda ako se uploada nova
+- obrisati sliku kategorije ako se uploada nova
+- ograničiti veličinu uploada
+- srediti boju linkova u dashboardu
+- Brisanje proizvoda i svih njegovih asseta (soft delete)
