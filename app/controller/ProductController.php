@@ -107,7 +107,6 @@ class ProductController extends SecurityController
     private function updateProductNameTranslation($productId): void
     {
         $this->isAdmin();
-        $this->isAdmin();
         if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
             ProductNameTranslation::update($productId, $this->getHrLocale());
         }

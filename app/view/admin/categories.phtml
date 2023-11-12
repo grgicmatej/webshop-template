@@ -64,7 +64,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Proizvodi</h3>
+                                <h3 class="card-title">Kategorije</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -85,19 +85,17 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Naziv</th>
-                                                    <th>Aktivan proizvod</th>
-                                                    <th>Cijena</th>
+                                                    <th>Aktivna kategorija</th>
                                                     <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php foreach ($products as $product):?>
-                                                <tr>
-                                                    <td><?=$product->name?></td>
-                                                    <td><?=$product->active ? 'Da':'Ne'?></td>
-                                                    <td><?=$product->price?> EUR</td>
-                                                    <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$product->id?>" class="float-right">Pregled proizvoda</a></td>
-                                                </tr>
+                                                <?php foreach ($categories as $category):?>
+                                                    <tr>
+                                                        <td><?=$category->name?></td>
+                                                        <td><?=$category->active ? 'Da':'Ne'?></td>
+                                                        <td><a href="<?= App::config("url") ?>Dashboard/category/<?=$category->id?>" class="float-right">Pregled kategorije</a></td>
+                                                    </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
                                             </table>
@@ -118,7 +116,7 @@
                         <!-- PRODUCT LIST -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Kreiraj novi proizvod</h3>
+                                <h3 class="card-title">Kreiraj novu kategoriju</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -134,52 +132,22 @@
                                 <div class="card card-primary">
                                     <!-- /.card-header -->
                                     <!-- form start -->
-                                    <form action="<?=App::config('url')?>Product/createProduct" method="post"  enctype="multipart/form-data">
+                                    <form action="<?=App::config('url')?>Category/createCategory" method="post"  enctype="multipart/form-data">
                                         <div class="card-body">
                                             <div class="form-group">
-                                                <label for="name_hr">Naziv proizvoda (HR)</label>
-                                                <input type="text" class="form-control" id="name_hr" name="name_hr" placeholder="Unesite ime proizvoda">
+                                                <label for="name_hr">Naziv kategorije (HR)</label>
+                                                <input type="text" class="form-control" id="name_hr" name="name_hr" placeholder="Unesite ime kategorije">
                                             </div>
                                             <div class="form-group">
-                                                <label for="name_en">Naziv proizvoda (EN)</label>
-                                                <input type="text" class="form-control" id="name_en" name="name_en" placeholder="Unesite ime proizvoda">
+                                                <label for="name_en">Naziv kategorije (EN)</label>
+                                                <input type="text" class="form-control" id="name_en" name="name_en" placeholder="Unesite ime kategorije">
                                             </div>
                                             <div class="form-group">
-                                                <label for="price">Cijena proizvoda</label>
-                                                <input type="number" class="form-control" id="price" name="price" placeholder="Unesite cijenu proizvoda" step=".01">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="price_on_sale">Cijena proizvoda na popustu</label>
-                                                <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" placeholder="Unesite cijenu proizvoda na akciji" step=".01">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="active_sale_price">Aktivan popust?</label>
-                                                <input type="checkbox" class="form-control" id="active_sale_price" name="active_sale_price" placeholder="Aktivan" value="1">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="available">Dostupna količina</label>
-                                                <input type="number" class="form-control" id="available" name="available" placeholder="Unesite količinu dostupnih proizvoda" step="1">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="description_hr">Opis proizvoda (HR)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="description_en">Opis proizvoda (EN)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="active">Aktivan proizvod?</label>
+                                                <label for="active">Aktivna kategorije?</label>
                                                 <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1">
                                             </div>
                                             <div class="form-group">
-                                                <label for="sku_number">SKU broj</label>
-                                                <input type="number" class="form-control" id="sku_number" name="sku_number" placeholder="Unesite sku broj ako postoji" step="1">
-                                            </div>
-
-
-                                            <div class="form-group">
-                                                <label for="exampleInputFile">Odabir slike</label>
+                                                <label for="exampleInputFile">Odabir slike kategorije</label>
                                                 <div class="input-group">
                                                     <div class="custom-file">
                                                         <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile">

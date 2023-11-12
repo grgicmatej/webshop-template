@@ -29,7 +29,11 @@ class ProductNameTranslation
         $stmt = $db->prepare('SELECT * FROM product_name_translation WHERE product_id=:product_id');
         $stmt->bindValue('product_id', $productId);
         $stmt->execute();
-        return $stmt->fetchAll();
+        $result = $stmt->fetchAll();
+        if (true === is_bool($result)) {
+            return [];
+        }
+        return $result;
     }
 
     public static function update($productId, $locale): void

@@ -64,7 +64,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Posljednje narudžbe</h3>
+                                <h3 class="card-title">Proizvod - uređivanje slike</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -78,35 +78,18 @@
                             <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table m-0">
-                                        <thead>
-                                        <tr>
-                                            <th>Order ID</th>
-                                            <th>Ukupna cijena</th>
-                                            <th>Status narudžbe</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <!--
-                                        <tr>
-                                            <td><a href="http://localhost/AdminLTE-3.2.0/pages/examples/invoice.html">OR9842</a></td>
-                                            <td>Call of Duty IV</td>
-                                            <td><span class="badge badge-success">Shipped</span></td>
-                                            <td>
-                                                link
-                                            </td>
-                                        </tr>
- -->
-                                        </tbody>
-                                    </table>
+                                    <div class="row">
+                                        <div class="col-6 text-center" style="padding: 5%"><img src="<?= App::config("url") ?>assets/images/productImages/<?=$category['image']?>" alt="" style="width: 100%"></div>
+                                        <div class="col-5 text-left" style="width: 80%; margin-top: 10%">
+                                            <label class="custom-file-label" for="exampleInputFile">Odabir slike</label>
+                                            <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile" form="update" >
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- /.table-responsive -->
                             </div>
                             <!-- /.card-body -->
-                            <div class="card-footer clearfix">
-                                <a href="<?= App::config("url") ?>Dashboard/orders" class="btn btn-sm btn-secondary float-right">Pregled svih narudžbi</a>
-                            </div>
+
                             <!-- /.card-footer -->
                         </div>
                         <!-- /.card -->
@@ -118,7 +101,7 @@
                         <!-- PRODUCT LIST -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Najpopularniji proizvodi</h3>
+                                <h3 class="card-title">Uređivanje proizvoda</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -131,26 +114,41 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body p-0">
-                                <ul class="products-list product-list-in-card pl-2 pr-2">
-                                    <!--
-                                    <li class="item">
-                                        <div class="product-img">
-                                            <img src="<?= App::config("url") ?>assets/img/admin/img/default-150x150.png" alt="Product Image" class="img-size-50">
-                                        </div>
-                                        <div class="product-info">
-                                            <a href="javascript:void(0)" class="product-title">Samsung TV
-                                                <span class="badge badge-warning float-right">$1800</span></a>
-                                            <span class="product-description">
-                        Samsung 32" 1080p 60Hz LED Smart HDTV.
-                      </span>
-                                        </div>
-                                    </li> -->
+                                <div class="card card-primary">
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
 
-                                </ul>
+                                    <form action="<?=App::config('url')?>Category/updateCategory/<?=$id?>" id="update" method="post"  enctype="multipart/form-data">
+                                        <div class="card-body">
+                                            <?php foreach ($categoryNameTranslation as $translation):?>
+                                                <?php if ('hr'===$translation->locale):?>
+                                                    <div class="form-group">
+                                                        <label for="name_hr">Naziv kategorije (HR)</label>
+                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                    </div>
+                                                <?php else:?>
+                                                    <div class="form-group">
+                                                        <label for="name_en">Naziv proizvoda (EN)</label>
+                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                    </div>
+                                                <?php endif;?>
+                                            <?php endforeach;?>
+                                            <div class="form-group">
+                                                <label for="active">Aktivna kategorija?</label>
+                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1" <?=$category['active']? 'checked' : '' ?>>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+
+                                        <div class="card-footer">
+                                            <button type="submit" class="btn btn-primary">Spremi promjene</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer text-center">
-                                <a href="<?= App::config("url") ?>Dashboard/products" class="uppercase">pregled svih proizvoda</a>
+                                <a href="<?= App::config("url") ?>Dashboard/categories" class="uppercase">pregled svih kategorija</a>
                             </div>
                             <!-- /.card-footer -->
                         </div>
