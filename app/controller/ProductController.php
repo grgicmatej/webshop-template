@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 class ProductController extends SecurityController
 {
-    private CONST HR = 'hr';
-    private CONST EN = 'en';
     public function getProduct($id): void
     {
         $this->isAdmin();
@@ -44,11 +42,11 @@ class ProductController extends SecurityController
     {
         $this->isAdmin();
         if (is_string(Request::post('description_hr')) && strlen(Request::post('description_hr')) > 0) {
-            ProductTranslation::create($productId, self::HR);
+            ProductTranslation::create($productId, $this->getHrLocale());
         }
 
         if (is_string(Request::post('description_en')) && strlen(Request::post('description_en')) > 0) {
-            ProductTranslation::create($productId, self::EN);
+            ProductTranslation::create($productId, $this->getEnLocale());
         }
     }
 
@@ -56,11 +54,11 @@ class ProductController extends SecurityController
     {
         $this->isAdmin();
         if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
-            ProductNameTranslation::create($productId, self::HR);
+            ProductNameTranslation::create($productId, $this->getHrLocale());
         }
 
         if (is_string(Request::post('name_en')) && strlen(Request::post('name_en')) > 0) {
-            ProductNameTranslation::create($productId, self::EN);
+            ProductNameTranslation::create($productId, $this->getEnLocale());
         }
     }
 
@@ -91,11 +89,11 @@ class ProductController extends SecurityController
     {
         $this->isAdmin();
         if (is_string(Request::post('description_hr')) && strlen(Request::post('description_hr')) > 0) {
-            ProductTranslation::update($productId, self::HR);
+            ProductTranslation::update($productId, $this->getHrLocale());
         }
 
         if (is_string(Request::post('description_en')) && strlen(Request::post('description_en')) > 0) {
-            ProductTranslation::update($productId, self::EN);
+            ProductTranslation::update($productId, $this->getEnLocale());
         }
     }
 
@@ -111,11 +109,11 @@ class ProductController extends SecurityController
         $this->isAdmin();
         $this->isAdmin();
         if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
-            ProductNameTranslation::update($productId, self::HR);
+            ProductNameTranslation::update($productId, $this->getHrLocale());
         }
 
         if (is_string(Request::post('name_en')) && strlen(Request::post('name_en')) > 0) {
-            ProductNameTranslation::update($productId, self::EN);
+            ProductNameTranslation::update($productId, $this->getEnLocale());
         }
     }
 
