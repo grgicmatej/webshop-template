@@ -35,7 +35,7 @@ final class App
 
         if (class_exists($controller) && method_exists($controller, $action)) {
             $controllerInstance = new $controller();
-            if (0 !== intval($id)) {
+            if (0 != $id) {
                 $controllerInstance -> $action($id);
             } else {
                 $controllerInstance -> $action();

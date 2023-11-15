@@ -122,4 +122,19 @@ class ProductController extends SecurityController
         Product::delete($id);
         header( 'Location:'.App::config('url').'/Dashboard');
     }
+
+    public function createProductCategory($productId): void
+    {
+        $this->isAdmin();
+        ProductCategory::create($productId);
+        header( 'Location:'.App::config('url').'/Dashboard/product/'.$productId);
+    }
+
+    public function deleteProductCategory($productCategory): void
+    {
+
+        $this->isAdmin();
+        ProductCategory::delete($productCategory);
+        header( 'Location:'.App::config('url').'/Dashboard/product/'.$_GET['p']);
+    }
 }

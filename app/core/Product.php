@@ -10,7 +10,11 @@ class Product
         $stmt = $db->prepare("SELECT products.id, price, active, pnt.name, pnt.locale FROM products LEFT JOIN product_name_translation AS pnt on products.id = pnt.product_id WHERE pnt.locale=:locale");
         $stmt->bindValue('locale', 'hr');
         $stmt->execute();
-        return $stmt->fetchAll();
+        $result = $stmt->fetchAll();
+        if (true === is_bool($result)) {
+            return [];
+        }
+        return (array) $result;
     }
     public static function create($id, $image): void
     {
@@ -77,7 +81,11 @@ class Product
         $stmt = $db->prepare('SELECT * FROM products WHERE id=:id');
         $stmt->bindValue('id', $id);
         $stmt->execute();
-        return (array) $stmt->fetch();
+        $result = $stmt->fetch();
+        if (true === is_bool($result)) {
+            return [];
+        }
+        return (array) $result;
     }
 
     public static function delete($id): void

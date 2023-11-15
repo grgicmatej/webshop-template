@@ -39,7 +39,9 @@ class DashboardController extends SecurityController
                 'productNameTranslation' => ProductNameTranslation::get($id),
                 'productQuantity' => ProductQuantity::get($id),
                 'productCount' => count(Product::all()),
-                'categoryCount' => count(Category::all())
+                'categoryCount' => count(Category::all()),
+                'productCategories' => ProductCategory::get($id),
+                'categories' => Category::all(),
             ]);
     }
 

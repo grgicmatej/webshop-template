@@ -23,7 +23,11 @@ class ProductQuantity
         $stmt = $db->prepare('SELECT * FROM product_quantity WHERE product_id=:id');
         $stmt->bindValue('id', $productId);
         $stmt->execute();
-        return (array) $stmt->fetch();
+        $result = $stmt->fetch();
+        if (true === is_bool($result)) {
+            return [];
+        }
+        return (array) $result;
     }
 
     public static function update($productId): void

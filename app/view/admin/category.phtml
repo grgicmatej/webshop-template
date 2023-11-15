@@ -64,7 +64,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Proizvod - uređivanje slike</h3>
+                                <h3 class="card-title">Kategorija - uređivanje slike</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -101,7 +101,7 @@
                         <!-- PRODUCT LIST -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Uređivanje proizvoda</h3>
+                                <h3 class="card-title">Uređivanje kategorije</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -124,12 +124,12 @@
                                                 <?php if ('hr'===$translation->locale):?>
                                                     <div class="form-group">
                                                         <label for="name_hr">Naziv kategorije (HR)</label>
-                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime kategorije">
                                                     </div>
                                                 <?php else:?>
                                                     <div class="form-group">
-                                                        <label for="name_en">Naziv proizvoda (EN)</label>
-                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                        <label for="name_en">Naziv kategorije (EN)</label>
+                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime kategorije">
                                                     </div>
                                                 <?php endif;?>
                                             <?php endforeach;?>

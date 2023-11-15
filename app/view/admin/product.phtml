@@ -92,6 +92,69 @@
 
                             <!-- /.card-footer -->
                         </div>
+
+                        <div class="card">
+                            <div class="card-header border-transparent">
+                                <h3 class="card-title">Proizvod - kategorije</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <section>
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered table-striped" id="userTable" width="100%">
+                                                <thead>
+                                                <tr>
+                                                    <th>Naziv kategorije</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php $activeCategories = [];?>
+                                                <?php foreach ($productCategories as $productCategory):?>
+                                                <?php $activeCategories[] = $productCategory->category_id?>
+                                                    <tr>
+                                                        <td><?=$productCategory->name?></td>
+
+                                                        <td><a href="<?= App::config("url") ?>Product/deleteProductCategory/<?=$productCategory->id?>?p=<?=$id?>" class="float-right">Ukloni kategoriju</a></td>
+                                                    </tr>
+                                                <?php endforeach;?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
+                                            <form action="<?=App::config('url')?>Product/createProductCategory/<?=$id?>" id="addCategory" method="post"  enctype="multipart/form-data">
+                                                <div class="form-group">
+                                                    <label for="category">Dodaj kategoriju</label>
+                                                    <select class="form-control" name="category_id" id="category">
+                                                        <?php foreach ($categories as $category):?>
+                                                        <?php if (in_array($category->id, $activeCategories)) {continue;}?>
+                                                        <option value="<?=$category->id?>"><?=$category->name?></option>
+                                                        <?php endforeach;?>
+                                                    </select>
+                                                </div>
+                                                <div class="">
+                                                    <button type="submit" class="btn btn-primary">Spremi kategoriju</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </section>
+                                </div>
+                                <!-- /.table-responsive -->
+                            </div>
+                            <!-- /.card-body -->
+
+                            <!-- /.card-footer -->
+                        </div>
                         <!-- /.card -->
                     </div>
                     <!-- /.col -->
