@@ -38,7 +38,7 @@ class Product
         $stmt->bindValue('price_on_sale', Request::post('price_on_sale'));
         $stmt->bindValue('active', $active);
         $stmt->bindValue('active_sale_price', $activeOnSale);
-        $stmt->bindValue('sku_number', Request::post('sku_number'));
+        $stmt->bindValue('sku_number', !empty(Request::post('sku_number')) ? intval(Request::post('sku_number')) : null);
         $stmt->execute();
     }
 
@@ -60,7 +60,7 @@ class Product
             $stmt->bindValue('price_on_sale', Request::post('price_on_sale'));
             $stmt->bindValue('active', $active);
             $stmt->bindValue('active_sale_price', $activeOnSale);
-            $stmt->bindValue('sku_number', Request::post('sku_number'));
+            $stmt->bindValue('sku_number', !empty(Request::post('sku_number')) ? intval(Request::post('sku_number')) : null);
             $stmt->bindValue('id', $id);
         } else {
             $stmt = $db->prepare('UPDATE products SET price=:price, image=:image, price_on_sale=:price_on_sale, active=:active, active_sale_price=:active_sale_price,sku_number=:sku_number,updated_at=NOW() WHERE id=:id');
@@ -69,7 +69,7 @@ class Product
             $stmt->bindValue('price_on_sale', Request::post('price_on_sale'));
             $stmt->bindValue('active', $active);
             $stmt->bindValue('active_sale_price', $activeOnSale);
-            $stmt->bindValue('sku_number', Request::post('sku_number'));
+            $stmt->bindValue('sku_number', !empty(Request::post('sku_number')) ? intval(Request::post('sku_number')) : null);
             $stmt->bindValue('id', $id);
         }
         $stmt->execute();

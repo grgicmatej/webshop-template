@@ -6,10 +6,13 @@ final class App
 {
     private const CONTROLLER = 'Controller';
     private const INDEX = 'Index';
+    private const UID = 'uid';
 
     public static function start(): void
     {
         session_start();
+        Session::checkIfSessionIsSet(self::UID);
+        ShoppingCart::deleteExpiredEntry();
         $pathInfo = Request::pathInfo();
         $pathInfo = trim($pathInfo, '/');
         $pathParts = explode('/', $pathInfo);

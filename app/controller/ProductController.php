@@ -13,7 +13,11 @@ class ProductController extends SecurityController
                 'product' => Product::get($id),
                 'productNameTranslation' => ProductNameTranslation::get($id),
                 'productTranslation' => ProductTranslation::get($id),
-                'productQuantity' => ProductQuantity::get($id)
+                'productQuantity' => ProductQuantity::get($id),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 

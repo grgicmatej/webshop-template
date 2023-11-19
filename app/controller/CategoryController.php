@@ -12,6 +12,10 @@ class CategoryController extends SecurityController
             [
                 'category' => Category::get($id),
                 'categoryNameTranslation' => CategoryNameTranslation::get($id),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 

@@ -11,7 +11,9 @@ class DashboardController extends SecurityController
         $view->render('admin/index',
             [
                 'productCount' => count(Product::all()),
-                'categoryCount' => count(Category::all())
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 
@@ -23,7 +25,9 @@ class DashboardController extends SecurityController
             [
                 'products' => Product::all(),
                 'productCount' => count(Product::all()),
-                'categoryCount' => count(Category::all())
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 
@@ -40,6 +44,8 @@ class DashboardController extends SecurityController
                 'productQuantity' => ProductQuantity::get($id),
                 'productCount' => count(Product::all()),
                 'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2),
                 'productCategories' => ProductCategory::get($id),
                 'categories' => Category::all(),
             ]);
@@ -53,7 +59,9 @@ class DashboardController extends SecurityController
             [
                 'categories' => Category::all(),
                 'productCount' => count(Product::all()),
-                'categoryCount' => count(Category::all())
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 
@@ -67,8 +75,37 @@ class DashboardController extends SecurityController
                 'category' => Category::get($id),
                 'categoryNameTranslation' => CategoryNameTranslation::get($id),
                 'productCount' => count(Product::all()),
-                'categoryCount' => count(Category::all())
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
             ]);
     }
 
+    public function settings(): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/settings',
+            [
+                'settings' => Settings::all(),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+            ]);
+    }
+
+    public function setting($id): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/setting',
+            [
+                'setting' => Settings::get($id),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+            ]);
+    }
 }
