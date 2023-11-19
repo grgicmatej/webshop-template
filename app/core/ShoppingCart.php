@@ -67,4 +67,12 @@ class ShoppingCart
         $stmt = $db->prepare("DELETE FROM shopping_cart WHERE valid_until<NOW() AND order_completed=false");
         $stmt->execute();
     }
+
+    public static function remove($id): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("DELETE FROM shopping_cart WHERE id=:id");
+        $stmt->bindValue('id', $id);
+        $stmt->execute();
+    }
 }

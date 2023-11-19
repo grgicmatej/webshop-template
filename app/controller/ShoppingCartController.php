@@ -13,16 +13,23 @@ class ShoppingCartController extends SecurityController
         } else {
             ShoppingCart::add($product, $shoppingCartExist['order_id']);
         }
+
+        header( 'Location:'.App::config('url').'/Store/Product/'.$id.'?m=1');
     }
 
-    public function get(): array
+    public function get(): void
     {
         $view = new View();
-        var_dump(ShoppingCart::get());
-        die();
         $view->render('public/shopping_cart',
             [
                 'shoppingCart' => ShoppingCart::get(),
             ]);
+    }
+
+    public function remove($id): void
+    {
+        ShoppingCart::remove($id);
+        header( 'Location:'.App::config('url').'/Store/Product/'.$id.'?m=2');
+
     }
 }
