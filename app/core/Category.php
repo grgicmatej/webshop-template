@@ -2,13 +2,10 @@
 
 declare(strict_types=1);
 
+use Model\CategoryModel;
+
 class Category
 {
-
-    public function __construct(private string $id, private string $image, private bool $active)
-    {
-    }
-
     public static function all(): array
     {
         $db = Db::getInstance();
@@ -35,21 +32,17 @@ class Category
         return (array) $result;
     }
 
-    public static function create($id, $image): void
+    public static function create(CategoryModel $categoryModel): void
     {
-        $active = 0;
-        if (Request::post('active') == 1) {
-            $active = 1;
-        }
 
         $db = Db::getInstance();
         $stmt = $db->prepare('INSERT INTO category 
                     (id, image, active) 
                 VALUES 
                     (:id, :image, :active)');
-        $stmt->bindValue('id', $id);
-        $stmt->bindValue('image', $image);
-        $stmt->bindValue('active', $active);
+        $stmt->bindValue('id', $categoryModel->getId());
+        $stmt->bindValue('image', $categoryModel->getImage());
+        $stmt->bindValue('active', $categoryModel->isActive());
         $stmt->execute();
     }
 
@@ -71,30 +64,4 @@ class Category
         $stmt->bindValue('id', $id);
         $stmt->execute();
     }
-
-    /**
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImage(): string
-    {
-        return $this->image;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-
 }

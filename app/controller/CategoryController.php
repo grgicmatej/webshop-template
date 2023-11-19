@@ -19,21 +19,24 @@ class CategoryController extends SecurityController
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function createCategory(): void
     {
         $this->isAdmin();
         Upload::UploadPhoto(true);
         if (Upload::GetFileName() !== NULL) {
-            $id = Uuid::generateUuid();
-            Category::create($id, Upload::GetFileName());
-            $this->createCategoryNameTranslation($id);
+            $category = \Validator\CategoryValidator::generateFromRequest(Upload::GetFileName());
+            Category::create($category);
+            $this->createCategoryNameTranslation($category->getId());
             header( 'Location:'.App::config('url').'/Dashboard/Categories');
         } else {
             throw new Exception('upload error');
         }
     }
 
-    private function createCategoryNameTranslation($categoryId): void
+    private function createCategoryNameTranslation(string $categoryId): void
     {
         $this->isAdmin();
         if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
