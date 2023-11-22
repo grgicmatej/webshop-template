@@ -7,7 +7,7 @@ class Product
     public static function all(): array
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare("SELECT products.id, price, active, pnt.name, pnt.locale FROM products LEFT JOIN product_name_translation AS pnt on products.id = pnt.product_id WHERE pnt.locale=:locale");
+        $stmt = $db->prepare("SELECT products.id, price, active, pnt.name, pnt.locale FROM products LEFT JOIN product_name_translation AS pnt on products.id = pnt.product_id WHERE pnt.locale=:locale AND products.soft_deleted=false");
         $stmt->bindValue('locale', 'hr');
         $stmt->execute();
         $result = $stmt->fetchAll();
@@ -91,7 +91,7 @@ class Product
     public static function delete($id): void
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare('DELETE FROM products WHERE products.id=:id');
+        $stmt = $db->prepare('UPDATE products SET soft_deleted=true WHERE id=:id');
         $stmt->bindValue('id', $id);
         $stmt->execute();
     }

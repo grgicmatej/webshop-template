@@ -142,12 +142,45 @@
                                                         <?php endforeach;?>
                                                     </select>
                                                 </div>
-                                                <div class="">
+                                                <div class="mb-4">
                                                     <button type="submit" class="btn btn-primary">Spremi kategoriju</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </section>
+
+                                </div>
+                                <!-- /.table-responsive -->
+                            </div>
+                            <!-- /.card-body -->
+
+                            <!-- /.card-footer -->
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header border-transparent">
+                                <h3 class="card-title">Proizvod - brisanje</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <section>
+                                        <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
+                                            <div class="form-group">
+                                                <a href="<?=App::config('url')?>Product/deleteProduct/<?=$id?>" class="btn btn-danger">Obriši proizvod</a>
+                                            </div>
+                                        </div>
+                                    </section>
+
                                 </div>
                                 <!-- /.table-responsive -->
                             </div>
