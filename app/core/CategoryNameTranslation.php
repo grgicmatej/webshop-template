@@ -14,7 +14,7 @@ class CategoryNameTranslation
         if (true === is_bool($result)) {
             return [];
         }
-        return $result;
+        return (array) $result;
     }
 
     public static function create($categoryId, $locale): void

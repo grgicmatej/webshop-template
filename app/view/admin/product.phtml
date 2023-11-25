@@ -121,7 +121,7 @@
                                                 <tbody>
                                                 <?php $activeCategories = [];?>
                                                 <?php foreach ($productCategories as $productCategory):?>
-                                                <?php $activeCategories[] = $productCategory->category_id?>
+                                                    <?php $activeCategories[] = $productCategory->category_id?>
                                                     <tr>
                                                         <td><?=$productCategory->name?></td>
 
@@ -137,8 +137,8 @@
                                                     <label for="category">Dodaj kategoriju</label>
                                                     <select class="form-control" name="category_id" id="category">
                                                         <?php foreach ($categories as $category):?>
-                                                        <?php if (in_array($category->id, $activeCategories)) {continue;}?>
-                                                        <option value="<?=$category->id?>"><?=$category->name?></option>
+                                                            <?php if (in_array($category->id, $activeCategories)) {continue;}?>
+                                                            <option value="<?=$category->id?>"><?=$category->name?></option>
                                                         <?php endforeach;?>
                                                     </select>
                                                 </div>
@@ -217,17 +217,17 @@
                                     <form action="<?=App::config('url')?>Product/updateProduct/<?=$id?>" id="update" method="post"  enctype="multipart/form-data">
                                         <div class="card-body">
                                             <?php foreach ($productNameTranslation as $translation):?>
-                                            <?php if ('hr'===$translation->locale):?>
-                                            <div class="form-group">
-                                                <label for="name_hr">Naziv proizvoda (HR)</label>
-                                                <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
-                                            </div>
-                                            <?php else:?>
-                                            <div class="form-group">
-                                                <label for="name_en">Naziv proizvoda (EN)</label>
-                                                <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
-                                            </div>
-                                            <?php endif;?>
+                                                <?php if ('hr'===$translation->locale):?>
+                                                    <div class="form-group">
+                                                        <label for="name_hr">Naziv proizvoda (HR)</label>
+                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                    </div>
+                                                <?php else:?>
+                                                    <div class="form-group">
+                                                        <label for="name_en">Naziv proizvoda (EN)</label>
+                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                    </div>
+                                                <?php endif;?>
                                             <?php endforeach;?>
                                             <div class="form-group">
                                                 <label for="price">Cijena proizvoda</label>
@@ -246,17 +246,17 @@
                                                 <input type="number" class="form-control" id="available" name="available" placeholder="Unesite količinu dostupnih proizvoda" value="<?=$productQuantity['available']?>" step="1">
                                             </div>
                                             <?php foreach ($productTranslation as $translation):?>
-                                            <?php if ('hr'===$translation->locale):?>
-                                            <div class="form-group">
-                                                <label for="description_hr">Opis proizvoda (HR)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"><?=$translation->description?></textarea>
-                                            </div>
-                                            <?php else:?>
-                                            <div class="form-group">
-                                                <label for="description_en">Opis proizvoda (EN)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"><?=$translation->description?></textarea>
-                                            </div>
-                                            <?php endif;?>
+                                                <?php if ('hr'===$translation->locale):?>
+                                                    <div class="form-group">
+                                                        <label for="description_hr">Opis proizvoda (HR)</label>
+                                                        <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"><?=$translation->description?></textarea>
+                                                    </div>
+                                                <?php else:?>
+                                                    <div class="form-group">
+                                                        <label for="description_en">Opis proizvoda (EN)</label>
+                                                        <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"><?=$translation->description?></textarea>
+                                                    </div>
+                                                <?php endif;?>
                                             <?php endforeach;?>
                                             <div class="form-group">
                                                 <label for="active">Aktivan proizvod?</label>

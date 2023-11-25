@@ -9,7 +9,7 @@ class Category
     public static function all(): array
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare("SELECT category.id, image, active, cnt.name, cnt.locale FROM category LEFT JOIN category_name_translation AS cnt on category.id = cnt.category_id WHERE cnt.locale=:locale");
+        $stmt = $db->prepare("SELECT category.id, image, active, cnt.name, cnt.locale FROM category LEFT JOIN category_name_translation AS cnt on category.id = cnt.category_id WHERE cnt.locale=:locale AND category.active=true");
         $stmt->bindValue('locale', 'hr');
         $stmt->execute();
         $result = $stmt->fetchAll();

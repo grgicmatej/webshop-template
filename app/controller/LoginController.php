@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 class LoginController
 {
+    public function index(): void
+    {
+        $view = new View();
+        $view->render('public/login',
+            []);
+    }
+
     public function login(): void
     {
         $user = Users::findUser(Request::post('email'));

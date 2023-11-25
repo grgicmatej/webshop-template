@@ -8,6 +8,9 @@ class IndexController
     {
         $view = new View();
         $view->render('public/index',
-            []);
+            [
+                'content' => Content::getContent(1),
+                'contentImages' => Content::getContentImages(1),
+            ]);
     }
 }

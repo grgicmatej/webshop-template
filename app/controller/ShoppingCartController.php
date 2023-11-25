@@ -14,7 +14,7 @@ class ShoppingCartController extends SecurityController
             ShoppingCart::add($product, $shoppingCartExist['order_id']);
         }
 
-        header( 'Location:'.App::config('url').'/Store/Product/'.$id.'?m=1');
+        header( 'Location:'.App::config('url').'/Trgovina/proizvod/'.$id.'?m=1');
     }
 
     public function get(): void
