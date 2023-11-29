@@ -64,4 +64,12 @@ class Category
         $stmt->bindValue('id', $id);
         $stmt->execute();
     }
+
+    public static function delete($id): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("DELETE FROM category WHERE id=:id");
+        $stmt->bindValue('id', $id);
+        $stmt->execute();
+    }
 }

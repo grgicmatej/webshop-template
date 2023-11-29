@@ -74,4 +74,12 @@ class CategoryController extends SecurityController
         header( 'Location:'.App::config('url').'/Dashboard/Categories');
 
     }
+
+    public function deleteCategory($id): void
+    {
+        $this->isAdmin();
+        CategoryNameTranslation::delete($id);
+        Category::delete($id);
+        header( 'Location:'.App::config('url').'/Dashboard/Categories');
+    }
 }

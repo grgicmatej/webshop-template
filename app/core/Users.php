@@ -44,4 +44,27 @@ class Users
             return null;
         }
     }
+
+    public static function updateUser(): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("UPDATE users SET email=:email WHERE id=:id");
+        $stmt->bindValue('email', $_POST['email']);
+        $stmt->bindValue('id', Session::getUserId());
+        $stmt->execute();
+    }
+
+    public static function updateUserDetails(): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("UPDATE users_details SET name=:name, surname=:surname, address=:address, city=:city, postal=:postal, phone=:phone WHERE user_id=:id");
+        $stmt->bindValue('name', $_POST['name']);
+        $stmt->bindValue('surname', $_POST['surname']);
+        $stmt->bindValue('address', $_POST['address']);
+        $stmt->bindValue('city', $_POST['city']);
+        $stmt->bindValue('postal', $_POST['postal']);
+        $stmt->bindValue('phone', $_POST['phone']);
+        $stmt->bindValue('id', Session::getUserId());
+        $stmt->execute();
+    }
 }

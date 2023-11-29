@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 class ShoppingCart
 {
-    public static function add($product, $order_id = null): void
+    public static function add($product, $orderId = null): void
     {
-        if (null === $order_id) {
-            $order_id = Uuid::generateUuid();
+        if (null === $orderId) {
+            $orderId = Uuid::generateUuid();
+        } else {
+            self::updateValidUntil($orderId);
         }
         if (1 === $product['active_sale_price']) {
             $productPrice = $product['price_on_sale'];
@@ -20,11 +22,47 @@ class ShoppingCart
                     (id, order_id, product_id, product_price, product_quantity, valid_until, user_id, created_at) 
             VALUES (:id, :order_id, :product_id, :product_price, :product_quantity, DATE_ADD(NOW(), INTERVAL 1 HOUR ), :user_id, NOW())");
         $stmt->bindValue('id', Uuid::generateUuid());
-        $stmt->bindValue('order_id', $order_id);
+        $stmt->bindValue('order_id', $orderId);
         $stmt->bindValue('product_id', $product['id']);
         $stmt->bindValue('product_price', $productPrice);
         $stmt->bindValue('product_quantity', 1);
         $stmt->bindValue('user_id', Session::getUserId());
+        $stmt->execute();
+    }
+
+    public static function getOrderId(): array
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("SELECT order_id FROM shopping_cart WHERE user_id=:user_id AND order_completed=:order_completed LIMIT 1");
+        $stmt->bindValue('user_id', Session::getUserId());
+        $stmt->bindValue('order_completed', 0);
+        $stmt->execute();
+        return (array) $stmt->fetch();
+    }
+
+    public static function updateOrderStatus(string $orderId)
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("UPDATE shopping_cart SET order_completed=:order_completed WHERE order_id=:order_id");
+        $stmt->bindValue('order_completed', 1);
+        $stmt->bindValue('order_id', $orderId);
+        $stmt->execute();
+    }
+
+    public static function sum()
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("SELECT SUM(product_price) AS total FROM shopping_cart WHERE user_id=:user_id AND order_completed=0");
+        $stmt->bindValue('user_id', Session::getUserId());
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public static function updateValidUntil(string $orderId): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("UPDATE shopping_cart SET valid_until=DATE_ADD(NOW(), INTERVAL 1 HOUR ) WHERE order_id=:order_id");
+        $stmt->bindValue('order_id', $orderId);
         $stmt->execute();
     }
 
@@ -45,12 +83,16 @@ class ShoppingCart
         $db = Db::getInstance();
         $stmt = $db->prepare("SELECT 
                 sc.*,
-                p.*
+                sc.id as scid,
+                p.*,
+                pnt.*
                 FROM shopping_cart AS sc
                 LEFT JOIN products AS p ON sc.product_id=p.id
-                WHERE sc.user_id=:user_id AND order_completed=:order_completed");
+                LEFT JOIN product_name_translation AS pnt ON sc.product_id=pnt.product_id
+                WHERE sc.user_id=:user_id AND order_completed=:order_completed AND pnt.locale=:locale");
         $stmt->bindValue('user_id', Session::getUserId());
         $stmt->bindValue('order_completed', 0);
+        $stmt->bindValue('locale', 'hr');
         $stmt->execute();
         $result = $stmt->fetchAll();
 

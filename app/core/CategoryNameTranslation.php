@@ -51,4 +51,12 @@ class CategoryNameTranslation
         $stmt->bindValue('category_id', $categoryId);
         $stmt->execute();
     }
+
+    public static function delete($categoryId): void
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("DELETE FROM category_name_translation WHERE category_id=:category_id");
+        $stmt->bindValue('category_id', $categoryId);
+        $stmt->execute();
+    }
 }
