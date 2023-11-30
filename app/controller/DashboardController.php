@@ -10,6 +10,7 @@ class DashboardController extends SecurityController
         $view = new View();
         $view->render('admin/index',
             [
+                'orders' => Order::allNew(),
                 'productCount' => count(Product::all()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
@@ -102,6 +103,37 @@ class DashboardController extends SecurityController
         $view->render('admin/setting',
             [
                 'setting' => Settings::get($id),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+            ]);
+    }
+
+    public function orders(): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/orders',
+            [
+                'orders' => Order::all(),
+                'productCount' => count(Product::all()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+            ]);
+    }
+
+    public function order($id): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/order',
+            [
+                'id' => $id,
+                'order' => Order::get($id),
+                'orderProducts' => ShoppingCart::getProductsByOrderId($id),
+                'categoryNameTranslation' => CategoryNameTranslation::get($id),
                 'productCount' => count(Product::all()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),

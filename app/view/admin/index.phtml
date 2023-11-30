@@ -84,20 +84,18 @@
                                             <th>Order ID</th>
                                             <th>Ukupna cijena</th>
                                             <th>Status narudžbe</th>
-                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <!--
+                                        <?php foreach ($orders as $order):?>
+
                                         <tr>
-                                            <td><a href="http://localhost/AdminLTE-3.2.0/pages/examples/invoice.html">OR9842</a></td>
-                                            <td>Call of Duty IV</td>
-                                            <td><span class="badge badge-success">Shipped</span></td>
-                                            <td>
-                                                link
-                                            </td>
+                                            <td><a href="<?= App::config("url") ?>Dashboard/order/<?=$order->id?>"><?=$order->numeric_id?></a></td>
+                                            <td><?=$order->total_price?> &euro;</td>
+                                            <td><span class="badge badge-success">Zaprimljeno</span></td>
+
                                         </tr>
- -->
+                                        <?php endforeach;?>
                                         </tbody>
                                     </table>
                                 </div>

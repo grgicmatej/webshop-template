@@ -27,7 +27,7 @@ class ProductCategory
                                     LEFT JOIN products AS p ON pc.product_id=p.id
                                     LEFT JOIN product_name_translation AS pnt ON p.id=pnt.product_id
                                     WHERE pnt.locale=:locale AND pc.category_id=:category
-                                    AND p.soft_deleted=false
+                                    AND p.soft_deleted=false AND p.active=true
                                ");
         $stmt->bindValue("locale", 'hr');
         $stmt->bindValue("category", $category);

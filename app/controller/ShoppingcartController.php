@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class ShoppingCartController extends SecurityController
+class ShoppingcartController extends SecurityController
 {
     public function add($id): void
     {
@@ -14,7 +14,7 @@ class ShoppingCartController extends SecurityController
             ShoppingCart::add($product, $shoppingCartExist['order_id']);
         }
 
-        header( 'Location:'.App::config('url').'/Trgovina/proizvod/'.$id.'?m=1');
+        header( 'Location:'.App::config('url').'Store/Product/'.$id.'?m=1');
     }
 
     public function get(): void
@@ -29,7 +29,7 @@ class ShoppingCartController extends SecurityController
     public function remove($id): void
     {
         ShoppingCart::remove($id);
-        header( 'Location:'.App::config('url').'/Store/Product/'.$id.'?m=2');
+        header( 'Location:'.App::config('url').'Store/Product/'.$id.'?m=2');
 
     }
 }

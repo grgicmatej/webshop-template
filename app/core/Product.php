@@ -62,6 +62,13 @@ class Product
         if (Request::post('active_sale_price') == 1) {
             $activeOnSale = 1;
         }
+
+        $priceOnSale = 0.00;
+
+        if (Request::post('price_on_sale') && strlen(Request::post('price_on_sale')) > 0) {
+            $priceOnSale = number_format(intval(Request::post('price_on_sale')), 2);
+        }
+
         $db = Db::getInstance();
         $stmt = $db->prepare('INSERT INTO products 
                     (id, image, price, price_on_sale, active, active_sale_price, created_at, updated_at, sku_number) 
@@ -70,7 +77,7 @@ class Product
         $stmt->bindValue('id', $id);
         $stmt->bindValue('image', $image);
         $stmt->bindValue('price', Request::post('price'));
-        $stmt->bindValue('price_on_sale', Request::post('price_on_sale'));
+        $stmt->bindValue('price_on_sale', $priceOnSale);
         $stmt->bindValue('active', $active);
         $stmt->bindValue('active_sale_price', $activeOnSale);
         $stmt->bindValue('sku_number', !empty(Request::post('sku_number')) ? intval(Request::post('sku_number')) : null);
@@ -88,11 +95,18 @@ class Product
         if (Request::post('active_sale_price') == 1) {
             $activeOnSale = 1;
         }
+
+        $priceOnSale = 0.00;
+
+        if (Request::post('price_on_sale') && strlen(Request::post('price_on_sale')) > 0) {
+            $priceOnSale = number_format(intval(Request::post('price_on_sale')), 2);
+        }
+
         $db = Db::getInstance();
         if (null === $image) {
             $stmt = $db->prepare('UPDATE products SET price=:price, price_on_sale=:price_on_sale, active=:active, active_sale_price=:active_sale_price,sku_number=:sku_number,updated_at=NOW() WHERE id=:id');
             $stmt->bindValue('price', Request::post('price'));
-            $stmt->bindValue('price_on_sale', Request::post('price_on_sale'));
+            $stmt->bindValue('price_on_sale', $priceOnSale);
             $stmt->bindValue('active', $active);
             $stmt->bindValue('active_sale_price', $activeOnSale);
             $stmt->bindValue('sku_number', !empty(Request::post('sku_number')) ? intval(Request::post('sku_number')) : null);

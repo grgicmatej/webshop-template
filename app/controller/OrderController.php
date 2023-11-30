@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class OrderController
+class OrderController extends SecurityController
 {
     public function index($id = null): void
     {
@@ -35,6 +35,20 @@ class OrderController
         //@todo header na success
         var_dump("prošlo sve");
         die();
+    }
+
+    public function changeStatus($id): void
+    {
+        $this->isAdmin();
+        Order::changeStatus($id);
+        header( 'Location:'.App::config('url').'Dashboard/order/'.$id);
+    }
+
+    public function changeComment($id): void
+    {
+        $this->isAdmin();
+        Order::changeComment($id);
+        header( 'Location:'.App::config('url').'Dashboard/order/'.$id);
     }
 
     private function getSettings(): array

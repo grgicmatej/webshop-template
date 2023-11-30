@@ -117,4 +117,18 @@ class ShoppingCart
         $stmt->bindValue('id', $id);
         $stmt->execute();
     }
+
+    public static function getProductsByOrderId(string $order_id): array
+    {
+        $db = Db::getInstance();
+        $stmt = $db->prepare("SELECT sc.*, p.*, p.id as pid, pnt.* FROM shopping_cart AS sc
+                            LEFT JOIN products AS p ON sc.product_id=p.id
+                            LEFT JOIN product_name_translation AS pnt ON sc.product_id=pnt.product_id
+                            WHERE sc.order_id=:id AND pnt.locale=:locale
+");
+        $stmt->bindValue('id', $order_id);
+        $stmt->bindValue('locale', 'hr');
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
