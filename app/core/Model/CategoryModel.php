@@ -6,7 +6,7 @@ namespace Model;
 
 class CategoryModel
 {
-    public function __construct(private string $id, private string $image, private bool $active)
+    public function __construct(private string $id, private ?string $image, private bool $active)
     {
     }
 
@@ -19,9 +19,9 @@ class CategoryModel
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getImage(): string
+    public function getImage(): ?string
     {
         return $this->image;
     }

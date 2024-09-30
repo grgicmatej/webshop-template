@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -92,9 +92,9 @@
                                                 <tbody>
                                                 <?php foreach ($categories as $category):?>
                                                     <tr>
-                                                        <td><?=$category->name?></td>
-                                                        <td><?=$category->active ? 'Da':'Ne'?></td>
-                                                        <td><a href="<?= App::config("url") ?>Dashboard/category/<?=$category->id?>" class="float-right">Pregled kategorije</a></td>
+                                                        <td><?=$category->getName()?></td>
+                                                        <td><?=$category->isActive() ? 'Da':'Ne'?></td>
+                                                        <td><a href="<?= App::config("url") ?>Dashboard/category/<?=$category->getId()?>" class="float-right">Pregled kategorije</a></td>
                                                     </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
@@ -160,7 +160,7 @@
                                         <!-- /.card-body -->
 
                                         <div class="card-footer">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="submit" class="btn btn-primary">Spremi</button>
                                         </div>
                                     </form>
                                 </div>

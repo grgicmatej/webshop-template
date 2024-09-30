@@ -11,15 +11,10 @@ class CategoryValidator extends \Request
     private const ID = 'id';
     private const IMAGE = 'image';
     private const ACTIVE = 'active';
-    public static function generateFromRequest(string $image): CategoryModel
+    public static function generateFromRequest(?string $image, string $id = null): CategoryModel
     {
-        $id = \Uuid::generateUuid();
-
-        $active = false;
-        if ('1' === $_POST[self::ACTIVE]) {
-            $active = true;
-        }
-
-        return new CategoryModel($id, $image, $active);
+        $modelId = $id ?: \Uuid::generateUuid();
+        $active = \Request::post('active') === '1';
+        return new CategoryModel($modelId, $image, $active);
     }
 }

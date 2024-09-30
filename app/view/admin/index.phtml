@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -64,7 +64,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Posljednje narudžbe</h3>
+                                <h3 class="card-title">Posljednje zaprimljene narudžbe</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -82,20 +82,29 @@
                                         <thead>
                                         <tr>
                                             <th>Order ID</th>
-                                            <th>Ukupna cijena</th>
+                                            <th>Ukupna cijena proizvoda (poštarina)</th>
                                             <th>Status narudžbe</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <?php foreach ($orders as $order):?>
+                                        <?php
+
+                                        foreach ($orders as $order):
+                                        ?>
 
                                         <tr>
-                                            <td><a href="<?= App::config("url") ?>Dashboard/order/<?=$order->id?>"><?=$order->numeric_id?></a></td>
-                                            <td><?=$order->total_price?> &euro;</td>
-                                            <td><span class="badge badge-success">Zaprimljeno</span></td>
-
+                                            <td><a href="<?= App::config("url") ?>Dashboard/order/<?=$order->getId()?>"><?=$order->getId()?></a></td>
+                                            <td>€ <?=number_format((float) $order->getProductPrice(), 2) ?> | (€ <?=number_format((float) $order->getDeliveryPrice(), 2)?>)</td>
+                                            <td><span class="badge badge-info"><?=$order->getStatus()?></span></td>
+                                            <td style="text-align: right">
+                                                <a href="<?= App::config("url") ?>Dashboard/order/<?=$order->getId()?>">
+                                                Pregled narudžbe
+                                                </a>
+                                            </td>
                                         </tr>
                                         <?php endforeach;?>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -129,23 +138,27 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body p-0">
-                                <ul class="products-list product-list-in-card pl-2 pr-2">
-                                    <!--
-                                    <li class="item">
-                                        <div class="product-img">
-                                            <img src="<?= App::config("url") ?>assets/img/admin/img/default-150x150.png" alt="Product Image" class="img-size-50">
-                                        </div>
-                                        <div class="product-info">
-                                            <a href="javascript:void(0)" class="product-title">Samsung TV
-                                                <span class="badge badge-warning float-right">$1800</span></a>
-                                            <span class="product-description">
-                        Samsung 32" 1080p 60Hz LED Smart HDTV.
-                      </span>
-                                        </div>
-                                    </li> -->
+                                <div class="table-responsive">
+                                    <table class="table m-0">
+                                        <tbody>
+                                        <?php foreach ($popularProducts as $product):?>
+                                            <tr>
+                                                <td><img src="<?= App::config('url') ?>assets/images/productImages/<?=$product->getImage()?>" alt="Product Image" class="img-size-50" style="width: 50px; height: 50px; object-fit: cover"></td>
+                                                <td>
+                                                    <span class="product-description">
+                                                        <?=$product->getName()?>
+                                                    </span>
+                                                </td>
+                                                <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$product->getProductId()?>" class="uppercase">Pregled proizvoda</a></td>
+                                        </tr>
+                                        <?php endforeach;?>
 
-                                </ul>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.table-responsive -->
                             </div>
+
                             <!-- /.card-body -->
                             <div class="card-footer text-center">
                                 <a href="<?= App::config("url") ?>Dashboard/products" class="uppercase">pregled svih proizvoda</a>

@@ -2,92 +2,170 @@
 
 declare(strict_types=1);
 
+use Enum\OrdersEnum;
+use Model\OrderModel;
+
 class Order
 {
-    public const ORDER_RECEIVED = 'Zaprimljeno';
-    //@todo add other statuses into some kind of enum
+    /**
+     * @throws Exception
+     */
     public static function all(): array
     {
+        $results = [];
         $db = Db::getInstance();
         $stmt = $db->prepare("SELECT * FROM orders ORDER BY created_at DESC");
         $stmt->execute();
-        $result = $stmt->fetchAll();
-        if (true === is_bool($result)) {
+        $queryResults = $stmt->fetchAll();
+        if (true === is_bool($queryResults)) {
             return [];
         }
-        return (array) $result;
+
+        foreach ($queryResults as $result) {
+            $results[] = new OrderModel(
+                intval($result->id),
+                Users::get($result->user_id),
+                $result->order_id,
+                new DateTimeImmutable($result->created_at),
+                floatval($result->product_price),
+                floatval($result->delivery_price),
+                floatval($result->total_price),
+                $result->payment_method,
+                $result->status,
+                $result->comment,
+            );
+        }
+
+        return $results;
     }
 
-    public static function allNew(): array
+    public static function get(string $id): ?OrderModel
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare("SELECT * FROM orders WHERE status=:status ORDER BY created_at DESC");
-        $stmt->bindValue('status', 'Zaprimljeno');
+        $stmt = $db->prepare('SELECT * FROM orders WHERE id=:id');
+        $stmt->bindValue('id', $id);
         $stmt->execute();
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetch();
         if (true === is_bool($result)) {
-            return [];
+            return null;
         }
-        return (array) $result;
+        return new OrderModel(
+            intval($result->id),
+            Users::get($result->user_id),
+            $result->order_id,
+            new DateTimeImmutable($result->created_at),
+            floatval($result->product_price),
+            floatval($result->delivery_price),
+            floatval($result->total_price),
+            $result->payment_method,
+            $result->status,
+            $result->comment,
+        );
     }
 
-    public static function getTotalAmounts()
+    public static function getByOrderId(OrderModel $order): ?OrderModel
     {
+        $db = Db::getInstance();
+        $stmt = $db->prepare('SELECT * FROM orders WHERE order_id=:order_id');
+        $stmt->bindValue('order_id', $order->getOrderId());
+        $stmt->execute();
+        $result = $stmt->fetch();
+        if (true === is_bool($result)) {
+            return null;
+        }
+        return new OrderModel(
+            intval($result->id),
+            Users::get($result->user_id),
+            $order->getOrderId(),
+            new DateTimeImmutable($result->created_at),
+            floatval($result->product_price),
+            floatval($result->delivery_price),
+            floatval($result->total_price),
+            $result->payment_method,
+            $result->status,
+            $result->comment,
+        );
+    }
+
+    public static function getAllNewOrders(): array
+    {
+        $results = [];
+        $db = Db::getInstance();
+        $stmt = $db->prepare("SELECT * FROM orders WHERE status=:status ORDER BY created_at DESC");
+        $stmt->bindValue('status', OrdersEnum::getReceived());
+        $stmt->execute();
+        $queryResults = $stmt->fetchAll();
+        if (true === is_bool($queryResults)) {
+            return [];
+        }
+
+        foreach ($queryResults as $result) {
+            $results[] = new OrderModel(
+                intval($result->id),
+                Users::get($result->user_id),
+                $result->order_id,
+                new DateTimeImmutable($result->created_at),
+                floatval($result->product_price),
+                floatval($result->delivery_price),
+                floatval($result->total_price),
+                $result->payment_method,
+                $result->status,
+                $result->comment,
+            );
+        }
+
+        return $results;
+    }
+
+    public static function getTotalAmounts(): string
+    {
+        $total = number_format(floatval(0), 2);
         $db = Db::getInstance();
         $stmt = $db->prepare("SELECT SUM(total_price) AS total FROM orders");
         $stmt->execute();
         $result = $stmt->fetch();
         if (true === is_bool($result)) {
-            return [];
+            return $total;
         }
-        return (array) $result;
+
+        if (null === $result->total) {
+            return $total;
+        }
+
+        return number_format(floatval(intval($result->total)), 2);
     }
 
-    public static function newOrder(string $orderId, float $productsTotal, float $deliveryTotal, float $total): void
+    public static function newOrder(OrderModel $order): void
     {
         $db = Db::getInstance();
-        $stmt = $db->prepare("INSERT INTO orders (id, user_id, created_at, product_price, delivery_price, total_price, payment_method, status, comment) 
-                    VALUES (:id, :user_id, now(), :product_price, :delivery_price, :total_price, :payment_method, :status, :comment)");
-        $stmt->bindValue('id', $orderId);
-        $stmt->bindValue('user_id', Session::getUserId());
-        $stmt->bindValue('order_id', $orderId);
-        $stmt->bindValue('product_price', $productsTotal);
-        $stmt->bindValue('delivery_price', $deliveryTotal);
-        $stmt->bindValue('total_price', $total);
-        $stmt->bindValue('payment_method', $_POST['payment_method']);
-        $stmt->bindValue('status', self::ORDER_RECEIVED);
-        $stmt->bindValue('comment', '');
+        $stmt = $db->prepare("INSERT INTO orders (user_id, order_id, created_at, product_price, delivery_price, total_price, payment_method, status, comment) 
+                    VALUES (:user_id, :order_id, now(), :product_price, :delivery_price, :total_price, :payment_method, :status, :comment)");
+        $stmt->bindValue('user_id', $order->getUser()->getId());
+        $stmt->bindValue('order_id', $order->getOrderId());
+        $stmt->bindValue('product_price', $order->getProductPrice());
+        $stmt->bindValue('delivery_price', $order->getDeliveryPrice());
+        $stmt->bindValue('total_price', $order->getTotalPrice());
+        $stmt->bindValue('payment_method', $order->getPaymentMethod());
+        $stmt->bindValue('status', $order->getStatus());
+        $stmt->bindValue('comment', $order->getComment());
         $stmt->execute();
     }
 
-    public static function get(string $id): array
-    {
-        $db = Db::getInstance();
-        $stmt = $db->prepare("SELECT o.*, o.id AS oid, u.*, ud.* FROM orders AS o
-                    LEFT JOIN users AS u ON o.user_id = u.id
-                    LEFT JOIN users_details AS ud ON o.user_id = ud.user_id 
-                    WHERE o.id =:id
-                    ");
-        $stmt->bindValue('id', $id);
-        $stmt->execute();
-        return (array) $stmt->fetchAll();
-    }
-
-    public static function changeStatus($id): void
+    public static function changeStatus(OrderModel $order): void
     {
         $db = Db::getInstance();
         $stmt = $db->prepare("UPDATE orders SET status=:status WHERE id=:id");
-        $stmt->bindValue('status', $_POST['status']);
-        $stmt->bindValue('id', $id);
+        $stmt->bindValue('id', $order->getId());
+        $stmt->bindValue('status', $order->getStatus());
         $stmt->execute();
     }
 
-    public static function changeComment($id): void
+    public static function changeComment(OrderModel $order): void
     {
         $db = Db::getInstance();
         $stmt = $db->prepare("UPDATE orders SET comment=:comment WHERE id=:id");
-        $stmt->bindValue('comment', $_POST['comment']);
-        $stmt->bindValue('id', $id);
+        $stmt->bindValue('id', $order->getId());
+        $stmt->bindValue('comment', $order->getComment());
         $stmt->execute();
     }
 }

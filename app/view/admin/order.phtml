@@ -1,3 +1,9 @@
+<?php
+
+use Enum\OrdersEnum;
+use Model\ShoppingCartModel;
+
+?>
 <!doctype html>
 <html lang="hr">
 <head>
@@ -5,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -16,7 +22,17 @@
     <meta name="author" content="">
 
     <?php require 'headCss.phtml' ?>
+
+    <script src="<?= App::config("url") ?>assets/js/admin/tinymce.min.js" type="text/javascript" referrerpolicy="origin"></script>
 </head>
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+    });
+</script>
+
 
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
@@ -64,7 +80,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Narudžba - <?=$order[0]->numeric_id?></h3>
+                                <h3 class="card-title">Proizvodi narudžbe</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -78,26 +94,30 @@
                             <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <div class="text-center"><b>Popis proizvoda</b></div>
+
                                     <section>
                                         <div class="col-md-12">
                                             <table class="table table-bordered table-striped" id="userTable" width="100%">
                                                 <thead>
                                                 <tr>
-                                                    <th>Proizvod</th>
-                                                    <th class="text-center">Količina</th>
-                                                    <th class="text-center">Cijena</th>
+                                                    <th>Naziv proizvoda</th>
+                                                    <th>Boja</th>
+                                                    <th>Veličina</th>
+                                                    <th>Cijena</th>
                                                     <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php foreach ($orderProducts as $orderProduct):?>
-                                                    <tr>
-                                                        <td><?=$orderProduct->name?></td>
-                                                        <td class="text-center"><?=$orderProduct->product_quantity?></td>
-                                                        <td class="text-center"><?=$orderProduct->product_price?> &euro;</td>
-                                                        <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$orderProduct->pid?>" class="float-right">Pregled proizvoda</a></td>
-                                                    </tr>
+                                                <?php
+                                                /** @var ShoppingCartModel $orderProduct */
+                                                foreach ($orderProducts as $orderProduct):?>
+                                                <tr>
+                                                    <td><?=ProductNameTranslation::getByProductModel($orderProduct->getProduct())->getName()?></td>
+                                                    <td><?=$orderProduct->getColor()->getName()?></td>
+                                                    <td><?=$orderProduct->getSize()->getName()?></td>
+                                                    <td>€ <?=number_format($orderProduct->getProductPrice(), 2)?></td>
+                                                    <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$orderProduct->getProduct()->getId()?>" class="float-right">Pregled proizvoda</a></td>
+                                                </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
                                             </table>
@@ -107,67 +127,14 @@
                                 <!-- /.table-responsive -->
                             </div>
                             <!-- /.card-body -->
-                            <!-- /.card-footer -->
-                        </div>
-                        <div class="card">
-                            <div class="card-header border-transparent">
 
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body p-0">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
-                                            <form action="<?=App::config('url')?>Order/changeStatus/<?=$order[0]->oid?>" id="changeStatus" method="post"  enctype="multipart/form-data">
-                                                <div class="form-group">
-                                                    <label for="status">Promjeni status narudžbe</label>
-                                                    <select class="form-control" name="status" id="status">
-                                                        <option value="Zaprimljeno" <?=$order[0]->status === 'Zaprimljeno' ? 'selected' : '' ?>>Zaprimljeno</option>
-                                                        <option value="U obradi" <?=$order[0]->status === 'U obradi' ? 'selected' : '' ?>>U obradi</option>
-                                                        <option value="Poslano" <?=$order[0]->status === 'Poslano' ? 'selected' : '' ?>>Poslano</option>
-                                                        <option value="Završeno" <?=$order[0]->status === 'Završeno' ? 'selected' : '' ?>>Završeno</option>
-                                                        <option value="Otkazano" <?=$order[0]->status === 'Otkazano' ? 'selected' : '' ?>>Otkazano</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <button type="submit" class="btn btn-primary">Spremi status</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <form action="<?=App::config('url')?>Order/changeComment/<?=$order[0]->oid?>" id="changeStatus" method="post"  enctype="multipart/form-data">
-                                            <div class="form-group">
-                                                <label for="comment">Administratorski komentar narudžbe</label>
-                                                <textarea name="comment" id="comment" cols="50" rows="5"><?=$order[0]->comment?></textarea>
-                                            </div>
-                                            <div class="mb-4">
-                                                <button type="submit" class="btn btn-primary">Spremi komentar</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.card-body -->
                             <!-- /.card-footer -->
                         </div>
                         <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-md-4">
+
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Detalji narudžbe</h3>
+                                <h3 class="card-title">Komentari narudžbe</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -181,41 +148,102 @@
                             <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <div class="table-responsive">
+
                                     <section>
                                         <div class="col-md-12">
-                                            <p>
-                                                <h4>Korisnički podaci</h4>
-                                            </p>
-                                            <hr>
-                                            <p><b>Ime:</b> <?=$order[0]->name?></p>
-                                            <p><b>Prezime:</b> <?=$order[0]->surname?></p>
-                                            <p><b>Adresa:</b> <?=$order[0]->address?></p>
-                                            <p><b>Poštanski broj:</b> <?=$order[0]->postal?></p>
-                                            <p><b>Grad:</b> <?=$order[0]->city?></p>
-                                            <hr>
-                                            <hr>
-                                            <p>
-                                            <h4>Podaci narudžbe</h4>
-                                            </p>
-                                            <hr>
-                                            <p><b>Ukupni iznos proizvoda:</b> <?=$order[0]->product_price?> &euro;</p>
-                                            <p><b>Ukupni iznos dostave:</b> <?=$order[0]->delivery_price?> &euro;</p>
-                                            <h5><b>Ukupni iznos narudžbe:</b> <?=$order[0]->total_price?> &euro;</h5>
-                                            <p><b>Metoda plaćanja:</b> <?=$order[0]->payment_method?> </p>
-                                            <p><b>Status narudžbe:</b> <?=$order[0]->status?> </p>
-                                            <p><b>Datum narudžbe:</b> <?= date('d.m.Y', strtotime($order[0]->created_at))?></p>
-                                            <hr>
-                                            <hr>
+                                            <form action="<?=App::config('url')?>Order/changeComment/<?=$orderDetails->getId()?>" id="update" method="post">
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label for="comment">Komentar</label><br>
+                                                        <textarea name="comment" id="comment" class="form-control" style="width: 100%" rows="10"><?=$orderDetails->getComment()?></textarea>
+                                                    </div>
+                                                </div>
+                                                <!-- /.card-body -->
+
+                                                <div class="card-footer">
+                                                    <button type="submit" class="btn btn-primary">Spremi komentar</button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </section>
                                 </div>
                                 <!-- /.table-responsive -->
                             </div>
                             <!-- /.card-body -->
+
                             <!-- /.card-footer -->
+                        </div>
+                    </div>
+                    <!-- /.col -->
+
+                    <div class="col-md-4">
+
+                        <!-- PRODUCT LIST -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Podaci o narudžbi</h3>
+                                <?php
+                               #tools::debug($orderDetails);
+                                ?>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <div class="card card-primary">
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="name_hr">Podaci o korisniku</label>
+                                                <p><span><b>Ime korisnika</b></span><span style="float: right"><?=$userDetails->getName()?></span></p>
+                                                <p><span><b>Adresa</b></span><span style="float: right"><?=$userDetails->getAddress()?></span></p>
+                                                <p><span><b>Mjesto</b></span><span style="float: right"><?=$userDetails->getCity()?></span></p>
+                                                <p><span><b>Poštanski broj</b></span><span style="float: right"><?=$userDetails->getPostal()?></span></p>
+                                                <p><span><b>Kontakt email</b></span><span style="float: right"><?=$user->getEmail()?></span></p>
+                                                <p><span><b>Kontakt broj</b></span><span style="float: right"><?=$userDetails->getPhone()?></span></p>
+                                            </div>
+                                            <hr>
+                                            <div class="form-group">
+                                                <label for="name_hr">Iznos</label>
+                                                <p><span><b>Način plaćanja</b></span><span style="float: right"><?=$orderDetails->getPaymentMethod()?></span></p>
+                                                <p><span><b>Ukupna cijena proizvoda</b></span><span style="float: right">€ <?=number_format($orderDetails->getProductPrice(), 2)?></span></p>
+                                                <p><span><b>Poštarina</b></span><span style="float: right">€ <?=number_format($orderDetails->getDeliveryPrice(), 2)?></span></p>
+                                                <p><span><b>Ukupno</b></span><span style="float: right">€ <?=number_format($orderDetails->getTotalPrice(), 2)?></span></p>
+                                            </div>
+                                            <hr>
+                                            <div class="form-group">
+                                                <label for="name_hr">Status narudžbe</label>
+                                                <p><span><b>Trenutni status</b></span><span style="float: right"><?=$orderDetails->getStatus()?></span></p>
+                                                <p style="text-align: center; margin-top: 30px">Promjeni status</p>
+                                                <form action="<?= App::config("url") ?>Order/changeStatus/<?=$orderDetails->getId()?>" method="post" id="changeStatus">
+                                                    <select name="status" id="" style="width: 100%; padding: 10px 5px;">
+                                                        <?php foreach (OrdersEnum::getStatusAsArray() as $enums):?>
+                                                        <option class="form-control" value="<?=$enums?>" <?= $enums === $orderDetails->getStatus()? 'selected': ''?>><?=$enums?></option>
+                                                        <?php endforeach;?>
+                                                    </select>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                        <!-- /.card-body -->
+
+                                        <div class="card-footer">
+                                            <button type="submit" class="btn btn-primary" form="changeStatus">Spremi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <!-- /.card -->
                     </div>
+                    <!-- /.col -->
                 </div>
                 <!-- /.row -->
             </div><!--/. container-fluid -->

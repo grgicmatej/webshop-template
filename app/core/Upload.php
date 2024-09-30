@@ -35,4 +35,12 @@ class Upload
         return self::$fileName;
     }
 
+    public static function deletePhoto(string $path): bool
+    {
+        if (true === file_exists($path)) {
+            return unlink($path);
+        }
+
+        return false;
+    }
 }

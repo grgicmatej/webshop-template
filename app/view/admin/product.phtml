@@ -1,3 +1,15 @@
+<?php
+
+use Dto\CategoryDto;
+use Dto\ProductCategoryDto;
+use Model\CategoryModel;
+use Model\ProductCategoryModel;
+use Model\ProductImageModel;
+use Model\ProductNameTranslationModel;
+use Model\ProductQuantityModel;
+use Model\ProductTranslationModel;
+
+?>
 <!doctype html>
 <html lang="hr">
 <head>
@@ -5,7 +17,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -16,7 +28,144 @@
     <meta name="author" content="">
 
     <?php require 'headCss.phtml' ?>
+
+    <script src="<?= App::config("url") ?>assets/js/admin/tinymce.min.js" type="text/javascript" referrerpolicy="origin"></script>
 </head>
+<script>
+    let urlAddress = '';
+    switch (window.location.origin) {
+        case 'http://localhost':
+            urlAddress = 'http://localhost/uncasual.design/Product/ProductDescriptionImage/';
+            break;
+        case 'https://matej.com.hr':
+        case 'http://matej.com.hr':
+            urlAddress = 'https://matej.com.hr/uncasual.design/Product/ProductDescriptionImage/';
+            break;
+        case 'https://uncasual.design':
+        case 'http://uncasual.design':
+            urlAddress = 'https://uncasual.design/Product/ProductDescriptionImage/';
+            break;
+    }
+
+    tinymce.init({
+        entity_encoding : "raw",
+        selector: '#description_hr',
+
+        plugins: [
+            "advlist autolink lists link image charmap print preview anchor",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime media table contextmenu spaste imagetools"
+        ],
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image ",
+
+        mediaembed_service_url: 'SERVICE_URL',
+        mediaembed_max_width: 450,
+
+        block_unsupported_drop: false,
+        image_title: true,
+        automatic_uploads: true,
+        allow_conditional_comments: true,
+        images_upload_url: urlAddress,
+        convert_urls: false,
+        relative_urls: false,
+        remove_script_host: false,
+        file_picker_types: 'image',
+        images_upload_handler: function (blobInfo, success, failure, progress) {
+            var xhr, formData;
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open('POST', urlAddress);
+
+            xhr.upload.onprogress = function (e) {
+                progress(e.loaded / e.total * 100);
+            };
+
+            xhr.onload = function() {
+                var json;
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    failure('HTTP Error: ' + xhr.status);
+                    return;
+                }
+                json = JSON.parse(xhr.responseText);
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+
+                success(json.location);
+            };
+
+            xhr.onerror = function () {
+                failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+            };
+
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData);
+        }
+    });
+    tinymce.init({
+        entity_encoding : "raw",
+        selector: '#description_en',
+
+        plugins: [
+            "advlist autolink lists link image charmap print preview anchor",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime media table contextmenu spaste imagetools"
+        ],
+        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image ",
+
+        mediaembed_service_url: 'SERVICE_URL',
+        mediaembed_max_width: 450,
+
+        block_unsupported_drop: false,
+        image_title: true,
+        automatic_uploads: true,
+        allow_conditional_comments: true,
+        images_upload_url: urlAddress,
+        convert_urls: false,
+        relative_urls: false,
+        remove_script_host: false,
+        file_picker_types: 'image',
+        images_upload_handler: function (blobInfo, success, failure, progress) {
+            var xhr, formData;
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open('POST', urlAddress);
+
+            xhr.upload.onprogress = function (e) {
+                progress(e.loaded / e.total * 100);
+            };
+
+            xhr.onload = function() {
+                var json;
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    failure('HTTP Error: ' + xhr.status);
+                    return;
+                }
+                json = JSON.parse(xhr.responseText);
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+
+                success(json.location);
+            };
+
+            xhr.onerror = function () {
+                failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+            };
+
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData);
+        }
+    });
+</script>
 
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
@@ -64,7 +213,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header border-transparent">
-                                <h3 class="card-title">Proizvod - uređivanje slike</h3>
+                                <h3 class="card-title">Proizvod - slike proizvoda</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -78,13 +227,49 @@
                             <!-- /.card-header -->
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <div class="row">
-                                        <div class="col-6 text-center" style="padding: 5%"><img src="<?= App::config("url") ?>assets/images/productImages/<?=$product['image']?>" alt="" style="width: 100%"></div>
-                                        <div class="col-5 text-left" style="width: 80%; margin-top: 10%">
-                                            <label class="custom-file-label" for="exampleInputFile">Odabir slike</label>
-                                            <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile" form="update" >
+                                    <div class="row" style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dashed darkgrey; margin-bottom: 40px">
+                                        <?php
+                                            /** @var ProductImageModel $image */
+                                        foreach ($productImage as $image):
+                                        ?>
+                                        <div class="col-4 text-center" style="margin-bottom: 30px">
+                                            <img src="<?= App::config("url") ?>assets/images/productImages/<?=$image->getImage() ?>" style="width: 250px; height: 250px; object-fit: cover">
+                                            <br><br>
+                                            <a href="<?= App::config("url") ?>Product/deleteImage/<?=$image->getId()?>?p=<?=$image->getProduct()->getId()?>&path=assets/images/productImages/<?=$image->getImage()?>"><i class="far fa-trash"></i></a>
+                                            <span style="padding-left: 4px; padding-right: 4px">|</span>
+                                            <?php if (true===boolval($image->isPrimaryImage())):?>
+                                            <span>Glavna fotografija</span>
+                                            <?php else:?>
+                                            <a href="<?= App::config("url") ?>Product/setImageAsPrimary/<?=$image->getId()?>?p=<?=$image->getProduct()->getId()?>">Postavi kao glavnu fotografiju</a>
+                                            <?php endif;?>
                                         </div>
+                                        <?php endforeach;?>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-10 text-center offset-1">
+                                            <form action="<?=App::config('url')?>Product/createProductImage/<?=$product->getId()?>" method="post"  enctype="multipart/form-data">
+                                                <div class="form-group">
+                                                    <label for="exampleInputFile">Odabir slike</label>
+                                                    <div class="input-group">
+                                                        <div class="custom-file">
+                                                            <label class="custom-file-label" for="exampleInputFile">Odabir slike</label>
+
+                                                            <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile">
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <div class="card-footer">
+                                                <button type="submit" class="btn btn-primary">Spremi</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+
                                 </div>
                                 <!-- /.table-responsive -->
                             </div>
@@ -120,25 +305,32 @@
                                                 </thead>
                                                 <tbody>
                                                 <?php $activeCategories = [];?>
-                                                <?php foreach ($productCategories as $productCategory):?>
-                                                    <?php $activeCategories[] = $productCategory->category_id?>
+                                                <?php
+                                                /** @var ProductCategoryDto $productCategory */
+                                                foreach ($productCategories as $productCategory):
+                                                ?>
+                                                <?php ?>
+                                                    <?php $activeCategories[] = $productCategory->getCategory()->getId()?>
                                                     <tr>
-                                                        <td><?=$productCategory->name?></td>
+                                                        <td><?=$productCategory->getCategoryNameTranslation()->getName()?></td>
 
-                                                        <td><a href="<?= App::config("url") ?>Product/deleteProductCategory/<?=$productCategory->id?>?p=<?=$id?>" class="float-right">Ukloni kategoriju</a></td>
+                                                        <td><a href="<?= App::config("url") ?>Product/deleteProductCategory/<?=$productCategory->getId()?>?p=<?=$productCategory->getProduct()->getId()?>" class="float-right">Ukloni kategoriju</a></td>
                                                     </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
-                                            <form action="<?=App::config('url')?>Product/createProductCategory/<?=$id?>" id="addCategory" method="post"  enctype="multipart/form-data">
+                                            <form action="<?=App::config('url')?>Product/createProductCategory/<?=$product->getId()?>" id="addCategory" method="post"  enctype="multipart/form-data">
                                                 <div class="form-group">
                                                     <label for="category">Dodaj kategoriju</label>
                                                     <select class="form-control" name="category_id" id="category">
-                                                        <?php foreach ($categories as $category):?>
-                                                            <?php if (in_array($category->id, $activeCategories)) {continue;}?>
-                                                            <option value="<?=$category->id?>"><?=$category->name?></option>
+                                                        <?php
+                                                        /** @var CategoryDto $category */
+                                                        foreach ($categories as $category):
+                                                        ?>
+                                                            <?php if (in_array($category->getId(), $activeCategories)) {continue;}?>
+                                                            <option value="<?=$category->getId()?>"><?=$category->getName()?></option>
                                                         <?php endforeach;?>
                                                     </select>
                                                 </div>
@@ -159,6 +351,121 @@
 
                         <div class="card">
                             <div class="card-header border-transparent">
+                                <h3 class="card-title">Proizvod - dostupne boje i veličine</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0">
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <?= (isset($_GET['e']) && '1' ===$_GET['e']) ? 'Unešena kombinacija već postoji':''; ?>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+
+                                    <section>
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered table-striped" id="userTable" width="100%">
+                                                <thead>
+                                                <tr>
+                                                    <th>Boja</th>
+                                                    <th>Veličina</th>
+                                                    <th>Količina</th>
+                                                    <th>Rezervirano</th>
+                                                    <th>Prodano</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php
+                                                /** @var ProductQuantityModel $productQ */
+                                                foreach ($productQuantity as $productQ):
+                                                ?>
+                                                <tr>
+                                                    <td><?=$productQ->getColor()->getName()?></td>
+                                                    <td><?=$productQ->getSize()->getName()?></td>
+                                                    <td style="text-align: center">
+                                                        <form action="<?= App::config("url") ?>Product/editAvailableNumber/<?=$productQ->getId()?>?p=<?=$productQ->getProduct()->getId()?>" method="post">
+                                                            <label for="available">
+                                                            <input type="number" name="available" value="<?=$productQ->getAvailable()?>"  class="form-control" min="0" required style="width: 65px" id="available">
+                                                            </label>
+                                                            <button type="submit" class="btn btn-primary" style="margin-top: -3px"><i class="fas fa-check"></i></button>
+
+                                                        </form>
+                                                           
+                                                        </td>
+                                                    <td style="text-align: center"><?=$productQ->getReserved()?></td>
+                                                    <td style="text-align: center"><?=$productQ->getSold()?>
+                                                        <a href="<?= App::config("url") ?>Product/resetSoldNumber/<?=$productQ->getId()?>?p=<?=$productQ->getProduct()->getId()?>"
+                                                           title="Uredi broj dostupnih proizvoda">
+                                                                <span style="padding-left: 15px">
+                                                                    <i class="far fa-history"></i>
+                                                                </span>
+                                                        </a>
+                                                        <a href="<?= App::config("url") ?>Product/deleteQuantity/<?=$productQ->getId()?>?p=<?=$productQ->getProduct()->getId()?>"
+                                                           title="Obriši dostupnost">
+                                                                <span style="padding-left: 15px">
+                                                                    <i class="fas fa-trash" style="color: lightcoral "></i>
+                                                                </span>
+                                                        </a>
+                                                </tr>
+                                                <?php endforeach;?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
+                                            <form action="<?=App::config('url')?>Product/createProductQuantity/<?=$product->getId()?>" id="addCategory" method="post"  enctype="multipart/form-data">
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="color">Dostupna boja</label>
+                                                            <select class="form-control" name="color" id="color" required>
+                                                                <?php foreach ($colors as $color):?>
+                                                                    <option value="<?=$color->getId()?>"><?=$color->getName()?></option>
+                                                                <?php endforeach;?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="size">Dostupna veličina</label>
+                                                            <select class="form-control" name="size" id="size" required>
+                                                                <?php foreach ($sizes as $size):?>
+                                                                    <option value="<?=$size->getId()?>"><?=$size->getName()?></option>
+                                                                <?php endforeach;?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="available">Dostupna količina</label>
+                                                            <input type="number" class="form-control" min="0" name="available" id="available" required>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="mb-4">
+                                                    <button type="submit" class="btn btn-primary">Spremi dostupnost</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </section>
+
+                                </div>
+                                <!-- /.table-responsive -->
+                            </div>
+                            <!-- /.card-body -->
+
+                            <!-- /.card-footer -->
+                        </div>
+
+
+                        <div class="card">
+                            <div class="card-header border-transparent">
                                 <h3 class="card-title">Proizvod - brisanje</h3>
 
                                 <div class="card-tools">
@@ -176,7 +483,7 @@
                                     <section>
                                         <div class="mt-5 text-center" style="padding-left: 10%; padding-right: 10%">
                                             <div class="form-group">
-                                                <a href="<?=App::config('url')?>Product/deleteProduct/<?=$id?>" class="btn btn-danger">Obriši proizvod</a>
+                                                <a href="<?=App::config('url')?>Product/deleteProduct/<?=$product->getId()?>" class="btn btn-danger">Obriši proizvod</a>
                                             </div>
                                         </div>
                                     </section>
@@ -214,57 +521,48 @@
                                     <!-- /.card-header -->
                                     <!-- form start -->
 
-                                    <form action="<?=App::config('url')?>Product/updateProduct/<?=$id?>" id="update" method="post"  enctype="multipart/form-data">
+                                    <form action="<?=App::config('url')?>Product/updateProduct/<?=$product->getId()?>" id="update" method="post"  enctype="multipart/form-data">
                                         <div class="card-body">
-                                            <?php foreach ($productNameTranslation as $translation):?>
-                                                <?php if ('hr'===$translation->locale):?>
+                                            <?php
+                                            /** @var ProductNameTranslationModel $translation */
+                                            foreach ($productNameTranslation as $translation):
+                                            ?>
+                                            <?php ?>
+                                                <?php if ('hr'===$translation->getLocale()):?>
                                                     <div class="form-group">
                                                         <label for="name_hr">Naziv proizvoda (HR)</label>
-                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                        <input type="text" class="form-control" id="name_hr" name="name_hr" value="<?=$translation->getName()?>" placeholder="Unesite ime proizvoda">
                                                     </div>
                                                 <?php else:?>
                                                     <div class="form-group">
                                                         <label for="name_en">Naziv proizvoda (EN)</label>
-                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->name?>" placeholder="Unesite ime proizvoda">
+                                                        <input type="text" class="form-control" id="name_en" name="name_en" value="<?=$translation->getName()?>" placeholder="Unesite ime proizvoda">
                                                     </div>
                                                 <?php endif;?>
                                             <?php endforeach;?>
                                             <div class="form-group">
                                                 <label for="price">Cijena proizvoda</label>
-                                                <input type="number" class="form-control" id="price" name="price" value="<?=$product['price']?>" placeholder="Unesite cijenu proizvoda" step=".01">
+                                                <input type="number" class="form-control" id="price" name="price" value="<?=$product->getPrice()?>" placeholder="Unesite cijenu proizvoda" step=".01">
                                             </div>
                                             <div class="form-group">
                                                 <label for="price_on_sale">Cijena proizvoda na popustu</label>
-                                                <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" value="<?=$product['price_on_sale']?>" placeholder="Unesite cijenu proizvoda na akciji" step=".01">
+                                                <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" value="<?=$product->getPriceOnSale()?>" placeholder="Unesite cijenu proizvoda na akciji" step=".01">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="active">Aktivan proizvod?</label>
+                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1" <?=$product->isActive()? 'checked' : '' ?>>
                                             </div>
                                             <div class="form-group">
                                                 <label for="active_sale_price">Aktivan popust?</label>
-                                                <input type="checkbox" class="form-control" id="active_sale_price" name="active_sale_price" placeholder="Aktivan" value="1" <?=$product['active_sale_price']? 'checked' : '' ?>>
+                                                <input type="checkbox" class="form-control" id="active_sale_price" name="active_sale_price" placeholder="Aktivan" value="1" <?=$product->isActiveSalePrice()? 'checked' : '' ?>>
                                             </div>
                                             <div class="form-group">
-                                                <label for="available">Dostupna količina</label>
-                                                <input type="number" class="form-control" id="available" name="available" placeholder="Unesite količinu dostupnih proizvoda" value="<?=$productQuantity['available']?>" step="1">
-                                            </div>
-                                            <?php foreach ($productTranslation as $translation):?>
-                                                <?php if ('hr'===$translation->locale):?>
-                                                    <div class="form-group">
-                                                        <label for="description_hr">Opis proizvoda (HR)</label>
-                                                        <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"><?=$translation->description?></textarea>
-                                                    </div>
-                                                <?php else:?>
-                                                    <div class="form-group">
-                                                        <label for="description_en">Opis proizvoda (EN)</label>
-                                                        <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"><?=$translation->description?></textarea>
-                                                    </div>
-                                                <?php endif;?>
-                                            <?php endforeach;?>
-                                            <div class="form-group">
-                                                <label for="active">Aktivan proizvod?</label>
-                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1" <?=$product['active']? 'checked' : '' ?>>
+                                                <label for="featured">Istaknut proizvod?</label>
+                                                <input type="checkbox" class="form-control" id="featured" name="featured" placeholder="Istaknut" value="1" <?=$product->isFeatured()? 'checked' : '' ?>>
                                             </div>
                                             <div class="form-group">
                                                 <label for="sku_number">SKU broj</label>
-                                                <input type="number" class="form-control" id="sku_number" name="sku_number" placeholder="Unesite sku broj ako postoji" step="1" value="<?=$product['sku_number']?>">
+                                                <input type="number" class="form-control" id="sku_number" name="sku_number" placeholder="Unesite sku broj ako postoji" step="1" value="<?=$product->getSkuNumber()?>">
                                             </div>
                                         </div>
                                         <!-- /.card-body -->
@@ -276,12 +574,45 @@
                                 </div>
                             </div>
                             <!-- /.card-body -->
-                            <div class="card-footer text-center">
-                                <a href="<?= App::config("url") ?>Dashboard/products" class="uppercase">pregled svih proizvoda</a>
+
+                            <div class="card-body p-0">
+                                <div class="card card-primary">
+                                    <!-- /.card-header -->
+                                    <!-- form start -->
+
+                                    <form action="<?=App::config('url')?>Product/updateDescription/<?=$product->getId()?>" id="update" method="post"  enctype="multipart/form-data">
+                                        <div class="card-body">
+                                            <?php
+                                            /** @var ProductTranslationModel $translation */
+                                            foreach ($productTranslation as $translation):
+                                            ?>
+                                                <?php if ('hr'===$translation->getLocale()):?>
+                                                    <div class="form-group">
+                                                        <label for="description_hr">Opis proizvoda (HR)</label><br>
+                                                        <textarea name="description_hr" id="description_hr" class="form-control" style="width: 100%" rows="10"><?=$translation->getDescription()?></textarea>
+                                                    </div>
+                                                <?php else:?>
+                                                    <div class="form-group">
+                                                        <label for="description_en">Opis proizvoda (EN)</label><br>
+                                                        <textarea name="description_en" id="description_en" class="form-control" style="width: 100%" rows="10"><?=$translation->getDescription()?></textarea>
+                                                    </div>
+                                                <?php endif;?>
+                                            <?php endforeach;?>
+                                        </div>
+                                        <!-- /.card-body -->
+
+                                        <div class="card-footer">
+                                            <button type="submit" class="btn btn-primary">Spremi promjene</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <!-- /.card-footer -->
                         </div>
                         <!-- /.card -->
+                        <div class="card-footer text-center">
+                            <a href="<?= App::config("url") ?>Dashboard/products" class="uppercase">pregled svih proizvoda</a>
+                        </div>
                     </div>
                     <!-- /.col -->
                 </div>

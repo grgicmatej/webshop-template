@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use Validator\SettingValidator;
+
 class SettingController extends SecurityController
 {
-    public function getCategory($id): void
+    public function getCategory(string $id): void
     {
         $this->isAdmin();
         $view = new View();
@@ -17,21 +19,21 @@ class SettingController extends SecurityController
     public function createSetting(): void
     {
         $this->isAdmin();
-        Settings::create();
-        header( 'Location:'.App::config('url').'/Dashboard/Settings');
+        Settings::create(SettingValidator::generateFromRequest());
+        header( 'Location:'.App::config('url').'Dashboard/Settings');
     }
 
-    public function updateSetting($id): void
+    public function updateSetting(string $id): void
     {
         $this->isAdmin();
-        Settings::update($id);
-        header( 'Location:'.App::config('url').'/Dashboard/Settings');
+        Settings::update(SettingValidator::generateFromRequest($id));
+        header( 'Location:'.App::config('url').'Dashboard/Settings');
     }
 
-    public function deleteSetting($id): void
+    public function deleteSetting(string $id): void
     {
         $this->isAdmin();
-        Settings::delete($id);
-        header( 'Location:'.App::config('url').'/Dashboard/Settings');
+        Settings::delete(SettingValidator::generateFromRequest($id));
+        header( 'Location:'.App::config('url').'Dashboard/Settings');
     }
 }

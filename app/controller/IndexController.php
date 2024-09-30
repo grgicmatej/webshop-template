@@ -9,8 +9,13 @@ class IndexController
         $view = new View();
         $view->render('public/index',
             [
-                'content' => Content::getContent(1),
-                'contentImages' => Content::getContentImages(1),
+                'content' => Content::all(1),
+                'contentImages' => Content::allImages(1),
+                'products' => Product::getProductsByFeaturedStatus(),
+                'popular' => Product::getProductsByPopularity(true, 6),
+                'shoppingCart' => ShoppingCart::get(),
+                'shoppingCartSum' => ShoppingCart::sum(),
+                'numOfShoppingCartItems' => count(ShoppingCart::get())
             ]);
     }
 }

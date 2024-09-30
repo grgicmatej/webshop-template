@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Validator\CategoryValidator;
+
 class DashboardController extends SecurityController
 {
     public function index(): void
@@ -10,11 +12,12 @@ class DashboardController extends SecurityController
         $view = new View();
         $view->render('admin/index',
             [
-                'orders' => Order::allNew(),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts(),
+                'popularProducts' => Product::getProductsByPopularity(false, 0),
+                'orders' => Order::getAllNewOrders()
             ]);
     }
 
@@ -25,30 +28,88 @@ class DashboardController extends SecurityController
         $view->render('admin/products',
             [
                 'products' => Product::all(),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
-    public function product($id): void
+    public function colors(): void
     {
+        $view = new View();
+        $view->render('admin/colors',
+            [
+                'colors' => Color::all(),
+                'productCount' => count(Product::allActive()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => Order::getTotalAmounts()
+            ]);
+    }
+
+    public function color(string $id): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/color',
+            [
+                'color' => Color::get($id),
+                'productCount' => count(Product::allActive()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => Order::getTotalAmounts()
+            ]);
+    }
+
+    public function sizes(): void
+    {
+        $view = new View();
+        $view->render('admin/sizes',
+            [
+                'sizes' => Size::all(),
+                'productCount' => count(Product::allActive()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => Order::getTotalAmounts()
+            ]);
+    }
+
+    public function size(string $id): void
+    {
+        $this->isAdmin();
+        $view = new View();
+        $view->render('admin/size',
+            [
+                'size' => Size::get($id),
+                'productCount' => count(Product::allActive()),
+                'categoryCount' => count(Category::all()),
+                'orderCount' => count(Order::all()),
+                'financeCount' => Order::getTotalAmounts()
+            ]);
+    }
+
+    public function product(string $id): void
+    {
+        $product = Product::get($id);
         $this->isAdmin();
         $view = new View();
         $view->render('admin/product',
             [
                 'id' => $id,
                 'product' => Product::get($id),
-                'productTranslation' => ProductTranslation::get($id),
-                'productNameTranslation' => ProductNameTranslation::get($id),
-                'productQuantity' => ProductQuantity::get($id),
-                'productCount' => count(Product::all()),
+                'productTranslation' => ProductTranslation::get($product),
+                'productNameTranslation' => ProductNameTranslation::all($product),
+                'productQuantity' => ProductQuantity::get($product),
+                'productImage' => ProductImage::getByProductId($product),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2),
-                'productCategories' => ProductCategory::get($id),
+                'financeCount' => Order::getTotalAmounts(),
+                'productCategories' => ProductCategory::get($product),
                 'categories' => Category::all(),
+                'colors' => Color::all(),
+                'sizes' => Size::all(),
             ]);
     }
 
@@ -59,14 +120,14 @@ class DashboardController extends SecurityController
         $view->render('admin/categories',
             [
                 'categories' => Category::all(),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
-    public function category($id): void
+    public function category(string $id): void
     {
         $this->isAdmin();
         $view = new View();
@@ -74,11 +135,11 @@ class DashboardController extends SecurityController
             [
                 'id' => $id,
                 'category' => Category::get($id),
-                'categoryNameTranslation' => CategoryNameTranslation::get($id),
-                'productCount' => count(Product::all()),
+                'categoryNameTranslation' => CategoryNameTranslation::getByCategory(CategoryValidator::generateFromRequest(null, $id)),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
@@ -89,24 +150,24 @@ class DashboardController extends SecurityController
         $view->render('admin/settings',
             [
                 'settings' => Settings::all(),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
-    public function setting($id): void
+    public function setting(string $id): void
     {
         $this->isAdmin();
         $view = new View();
         $view->render('admin/setting',
             [
                 'setting' => Settings::get($id),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
@@ -116,28 +177,29 @@ class DashboardController extends SecurityController
         $view = new View();
         $view->render('admin/orders',
             [
-                'orders' => Order::all(),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts(),
+                'orders' => Order::all()
             ]);
     }
 
-    public function order($id): void
+    public function order(string $id): void
     {
+        $order = Order::get($id);
         $this->isAdmin();
         $view = new View();
         $view->render('admin/order',
             [
-                'id' => $id,
-                'order' => Order::get($id),
-                'orderProducts' => ShoppingCart::getProductsByOrderId($id),
-                'categoryNameTranslation' => CategoryNameTranslation::get($id),
-                'productCount' => count(Product::all()),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts(),
+                'orderProducts' => ShoppingCart::getShoppingCartProductsForCompletedOrder($order),
+                'orderDetails' => $order,
+                'user' => $order->getUser(),
+                'userDetails' => Users::findDetailsForUser($order->getUser())
             ]);
     }
 }

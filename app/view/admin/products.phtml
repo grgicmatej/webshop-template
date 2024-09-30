@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -91,12 +91,14 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php foreach ($products as $product):?>
+                                                <?php
+                                                /** @var \Dto\DashboardProductDto $product */
+                                                foreach ($products as $product):?>
                                                 <tr>
-                                                    <td><?=$product->name?></td>
-                                                    <td><?=$product->active ? 'Da':'Ne'?></td>
-                                                    <td><?=$product->price?> EUR</td>
-                                                    <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$product->id?>" class="float-right">Pregled proizvoda</a></td>
+                                                    <td><?=$product->getName()?></td>
+                                                    <td><?=$product->getActive() === 1 ? 'Da':'Ne'?></td>
+                                                    <td><?=$product->getPrice()?> EUR</td>
+                                                    <td><a href="<?= App::config("url") ?>Dashboard/product/<?=$product->getId()?>" class="float-right">Pregled proizvoda</a></td>
                                                 </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
@@ -153,46 +155,30 @@
                                                 <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" placeholder="Unesite cijenu proizvoda na akciji" step=".01">
                                             </div>
                                             <div class="form-group">
+                                                <label for="active">Aktivan proizvod?</label>
+                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1">
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="active_sale_price">Aktivan popust?</label>
                                                 <input type="checkbox" class="form-control" id="active_sale_price" name="active_sale_price" placeholder="Aktivan" value="1">
                                             </div>
+
+                                            <input type="hidden" name="description_hr" value="">
+                                            <input type="hidden" name="description_en" value="">
+
                                             <div class="form-group">
-                                                <label for="available">Dostupna količina</label>
-                                                <input type="number" class="form-control" id="available" name="available" placeholder="Unesite količinu dostupnih proizvoda" step="1" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="description_hr">Opis proizvoda (HR)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_hr" name="description_hr"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="description_en">Opis proizvoda (EN)</label>
-                                                <textarea class="form-control" rows="3" placeholder="Enter ..." id="description_en" name="description_en"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="active">Aktivan proizvod?</label>
-                                                <input type="checkbox" class="form-control" id="active" name="active" placeholder="Aktivan" value="1">
+                                                <label for="featured">Istaknut proizvod?</label>
+                                                <input type="checkbox" class="form-control" id="featured" name="featured" placeholder="Istaknut" value="1">
                                             </div>
                                             <div class="form-group">
                                                 <label for="sku_number">SKU broj</label>
                                                 <input type="number" class="form-control" id="sku_number" name="sku_number" placeholder="Unesite sku broj ako postoji" step="1">
                                             </div>
-
-
-                                            <div class="form-group">
-                                                <label for="exampleInputFile">Odabir slike</label>
-                                                <div class="input-group">
-                                                    <div class="custom-file">
-                                                        <input type="file" name="myfile" class="custom-file-input" id="exampleInputFile">
-                                                        <label class="custom-file-label" for="exampleInputFile">Odabir slike</label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
                                         </div>
                                         <!-- /.card-body -->
 
                                         <div class="card-footer">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="submit" class="btn btn-primary">Spremi</button>
                                         </div>
                                     </form>
                                 </div>

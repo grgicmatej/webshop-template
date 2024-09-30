@@ -13,7 +13,7 @@ class Request
         }
     }
 
-    public static function post($key, $default='')
+    public static function post($key, $default='0')
     {
         return $_POST[$key] ?? $default;
     }

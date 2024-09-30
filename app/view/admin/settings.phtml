@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project name</title>
+    <title><?= App::config('nazivApp') ?></title>
 
     <meta property="og:title" content="">
     <meta property="og:image" content="">
@@ -92,9 +92,9 @@
                                                 <tbody>
                                                 <?php foreach ($settings as $setting):?>
                                                 <tr>
-                                                    <td><?=$setting->setting_key?></td>
-                                                    <td><?=$setting->value?></td>
-                                                    <td><a href="<?= App::config("url") ?>Dashboard/setting/<?=$setting->id?>" class="float-right">Pregled postavke</a></td>
+                                                    <td><?=$setting->getSettingKey()?></td>
+                                                    <td><?=$setting->getValue()?></td>
+                                                    <td><a href="<?= App::config("url") ?>Dashboard/setting/<?=$setting->getId()?>" class="float-right">Pregled postavke</a></td>
                                                 </tr>
                                                 <?php endforeach;?>
                                                 </tbody>

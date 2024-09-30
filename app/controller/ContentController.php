@@ -2,35 +2,41 @@
 
 declare(strict_types=1);
 
+use Validator\ContentImageValidator;
+use Validator\ContentValidator;
+
 class ContentController extends SecurityController
 {
-    public function editContent($id): void
+    public function editContent(string $id): void
     {
         $this->isAdmin();
         $view = new View();
         $view->render('public/sadrzaj',
             [
-                'content' =>(array) Content::getOneContent(intval($id)),
+                'content' =>Content::get($id),
+                'contentImages' => Content::allImages(3),
                 'page' => $_GET['page']
             ]);
     }
 
-    public function editContentImages($id): void
+    public function editContentImages(string $id): void
     {
         $this->isAdmin();
         $view = new View();
-        $view->render('public/slike',
+        $view->render('public/sadrzaj-slike',
             [
-                'content' =>(array) Content::getOneContentImages(intval($id)),
-                'page' => $_GET['page']
+                'contentImages' => Content::allImages(3),
+                'page' => $_GET['page'],
+                'content' => Content::getOneContentImages($id)
             ]);
     }
 
     public function updateContent(): void
     {
         $this->isAdmin();
-        Content::updateContent();
-        header( 'Location:'.App::config('url').'/Routes/index/'.Request::post('page'));
+        $content = ContentValidator::generateFromRequest();
+        Content::updateContent($content);
+        header( 'Location:'.App::config('url').'Routes/index/'.$content->getPage());
     }
 
     /** @throws Exception */
@@ -39,10 +45,13 @@ class ContentController extends SecurityController
         $this->isAdmin();
         Upload::UploadPhoto();
         if (Upload::GetFileName() !== NULL){
-            Content::updateContentImages(Upload::GetFileName());
+            $contentImage = ContentImageValidator::generateFromRequest(Upload::GetFileName());
+            Content::updateContentImages($contentImage);
+            header( 'Location:'.App::config('url').'Routes/index/'.$contentImage->getPage());
         } else {
-            throw new Exception('upload error');
+            $contentImage = ContentImageValidator::generateFromRequest();
+            Content::updateContentImageTitle($contentImage);
+            header( 'Location:'.App::config('url').'Routes/index/'.$contentImage->getPage());
         }
-        header( 'Location:'.App::config('url').'/Routes/index/'.Request::post('page'));
     }
 }

@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use Model\UserDetailsModel;
+use Model\UserModel;
+use Validator\UserValidator;
+
 class Session
 {
     private static $instance;
     private const UID = 'uid';
 
-    public function login($isAdmin, $userDetails): void
+    public function login(UserModel $user, UserDetailsModel $userDetails): void
     {
-        $_SESSION['isAdmin'] = $isAdmin;
-        $_SESSION['name'] = $userDetails['name'].' '.$userDetails['surname'];
+        $_SESSION['isAdmin'] = $user->isAdmin();
+        $_SESSION['name'] = $userDetails->getName().' '.$userDetails->getSurname();
         $_SESSION['isLoggedIn'] = true;
     }
 
@@ -66,8 +70,9 @@ class Session
     public static function checkIfSessionIsSet($key): void
     {
         if (false === isset($_SESSION[$key])) {
-            self::set(self::UID, Uuid::generateUuid());
-            Users::setGuestUser(self::get(self::UID));
+            $user = UserValidator::generateNewGuestUser();
+            self::set(self::UID, $user->getId());
+            Users::setGuestUser($user);
         }
     }
 

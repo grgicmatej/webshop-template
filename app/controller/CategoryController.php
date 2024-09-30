@@ -2,20 +2,24 @@
 
 declare(strict_types=1);
 
+use Model\CategoryModel;
+use Validator\CategoryNameTranslationValidator;
+use Validator\CategoryValidator;
+
 class CategoryController extends SecurityController
 {
-    public function getCategory($id): void
+    public function getCategory(string $id): void
     {
         $this->isAdmin();
         $view = new View();
         $view->render('admin/category',
             [
                 'category' => Category::get($id),
-                'categoryNameTranslation' => CategoryNameTranslation::get($id),
-                'productCount' => count(Product::all()),
+                'categoryNameTranslation' => CategoryNameTranslation::getByCategory(CategoryValidator::generateFromRequest(null, $id)),
+                'productCount' => count(Product::allActive()),
                 'categoryCount' => count(Category::all()),
                 'orderCount' => count(Order::all()),
-                'financeCount' => number_format(floatval(Order::getTotalAmounts()['total']), 2)
+                'financeCount' => Order::getTotalAmounts()
             ]);
     }
 
@@ -27,10 +31,10 @@ class CategoryController extends SecurityController
         $this->isAdmin();
         Upload::UploadPhoto(true);
         if (Upload::GetFileName() !== NULL) {
-            $category = \Validator\CategoryValidator::generateFromRequest(Upload::GetFileName());
+            $category = CategoryValidator::generateFromRequest(Upload::GetFileName());
             Category::create($category);
             $this->createCategoryNameTranslation($category->getId());
-            header( 'Location:'.App::config('url').'/Dashboard/Categories');
+            header( 'Location:'.App::config('url').'Dashboard/Categories');
         } else {
             throw new Exception('upload error');
         }
@@ -40,27 +44,30 @@ class CategoryController extends SecurityController
     {
         $this->isAdmin();
         if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
-            CategoryNameTranslation::create($categoryId, $this->getHrLocale());
-        }
-
-        if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
-            CategoryNameTranslation::create($categoryId, $this->getEnLocale());
-        }
-    }
-
-    private function updateCategoryNameTranslation($categoryId): void
-    {
-        $this->isAdmin();
-        if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
-            CategoryNameTranslation::update($categoryId, $this->getHrLocale());
+            $categoryNameTranslation = CategoryNameTranslationValidator::generateFromRequest($categoryId, $this->getHrLocale(), Request::post('name_hr'));
+            CategoryNameTranslation::create($categoryNameTranslation);
         }
 
         if (is_string(Request::post('name_en')) && strlen(Request::post('name_en')) > 0) {
-            CategoryNameTranslation::update($categoryId, $this->getEnLocale());
+            $categoryNameTranslation = CategoryNameTranslationValidator::generateFromRequest($categoryId, $this->getEnLocale(), Request::post('name_en'));
+            CategoryNameTranslation::create($categoryNameTranslation);
         }
     }
 
-    public function updateCategory($id): void
+    private function updateCategoryNameTranslation(string $categoryId): void
+    {
+        $this->isAdmin();
+        if (is_string(Request::post('name_hr')) && strlen(Request::post('name_hr')) > 0) {
+            $categoryNameTranslation = CategoryNameTranslationValidator::generateFromRequest($categoryId, $this->getHrLocale(), Request::post('name_hr'));
+            CategoryNameTranslation::update($categoryNameTranslation);
+        }
+
+        if (is_string(Request::post('name_en')) && strlen(Request::post('name_en')) > 0) {
+            $categoryNameTranslation = CategoryNameTranslationValidator::generateFromRequest($categoryId, $this->getEnLocale(), Request::post('name_en'));
+            CategoryNameTranslation::update($categoryNameTranslation);        }
+    }
+
+    public function updateCategory(string $id): void
     {
         $this->isAdmin();
         Upload::UploadPhoto(true);
@@ -68,18 +75,19 @@ class CategoryController extends SecurityController
         if (Upload::GetFileName() !== NULL) {
             $uploadImage = Upload::GetFileName();
         }
-
-        Category::update($id, $uploadImage);
+        $category = CategoryValidator::generateFromRequest($uploadImage, $id);
+        Category::update($category);
         $this->updateCategoryNameTranslation($id);
-        header( 'Location:'.App::config('url').'/Dashboard/Categories');
+        header( 'Location:'.App::config('url').'Dashboard/Categories');
 
     }
 
-    public function deleteCategory($id): void
+    public function deleteCategory(string $id): void
     {
         $this->isAdmin();
-        CategoryNameTranslation::delete($id);
-        Category::delete($id);
-        header( 'Location:'.App::config('url').'/Dashboard/Categories');
+        $category = CategoryValidator::generateFromRequest(null, $id);
+        CategoryNameTranslation::delete($category);
+        Category::delete($category);
+        header( 'Location:'.App::config('url').'Dashboard/Categories');
     }
 }

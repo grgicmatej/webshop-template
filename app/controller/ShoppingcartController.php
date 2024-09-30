@@ -2,19 +2,39 @@
 
 declare(strict_types=1);
 
+use Model\ProductQuantityModel;
+
 class ShoppingcartController extends SecurityController
 {
-    public function add($id): void
+    /**
+     * @throws Exception
+     */
+    public function add(string $id): void
     {
+        $size = Size::getByValue($_POST['size']);
+        $color = Color::getByValue($_POST['color']);
         $product = Product::get($id);
-        $shoppingCartExist = ShoppingCart::checkIfExist();
-        if (false === $shoppingCartExist) {
-            ShoppingCart::add($product);
-        } else {
-            ShoppingCart::add($product, $shoppingCartExist['order_id']);
+
+        if (null === $product) {
+            throw new Exception('Invalid product');
         }
 
-        header( 'Location:'.App::config('url').'Store/Product/'.$id.'?m=1');
+        $productQuantity = ProductQuantity::getByValues($product, $size, $color);
+
+        if (null === $productQuantity || false === $this->hasEnoughQuantity($productQuantity)) {
+            header( 'Location:'.App::config('url').'Trgovina/proizvod/'.$product->getId().'?m=0');
+        } else {
+            $shoppingCartExist = ShoppingCart::checkIfExist();
+            if (null === $shoppingCartExist) {
+                ShoppingCart::add($product, $productQuantity);
+            } else {
+                ShoppingCart::add($product, $productQuantity,$shoppingCartExist);
+            }
+
+            ProductQuantity::updateReservedNumber($productQuantity);
+
+            header( 'Location:'.App::config('url').'Trgovina/proizvod/'.$product->getId().'?m=1');
+        }
     }
 
     public function get(): void
@@ -26,10 +46,20 @@ class ShoppingcartController extends SecurityController
             ]);
     }
 
-    public function remove($id): void
+    public function remove(string $id): void
     {
-        ShoppingCart::remove($id);
-        header( 'Location:'.App::config('url').'Store/Product/'.$id.'?m=2');
+        $shoppingCart = ShoppingCart::getById($id);
+        ProductQuantity::updateReservedNumberAfterDeletedShoppingCart($shoppingCart);
+        ShoppingCart::remove($shoppingCart);
+        header( 'Location:'.App::config('url').'Trgovina/proizvod/'.$shoppingCart->getProduct()->getId().'?m=2');
+    }
 
+    private function hasEnoughQuantity(ProductQuantityModel $productQuantityModel): bool
+    {
+        $available = $productQuantityModel->getAvailable();
+        $reserved = $productQuantityModel->getReserved();
+        $sold = $productQuantityModel->getSold();
+
+        return 0 < $available - $reserved - $sold;
     }
 }
